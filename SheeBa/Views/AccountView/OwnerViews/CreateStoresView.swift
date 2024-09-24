@@ -1,27 +1,28 @@
 //
-//  EditStoreInfoView.swift
+//  CreateStoresView.swift
 //  SheeBa
 //
-//  Created by 金子広樹 on 2024/02/20.
+//  Created by 金子広樹 on 2024/09/17.
 //
 
 import SwiftUI
 
-struct EditStoreInfoView: View {
+import SwiftUI
+
+struct CreateStoresView: View {
     
     @FocusState var focus: Bool
     @Environment(\.dismiss) var dismiss
     @ObservedObject var vm = ViewModel()
     @State private var isShowImagePicker = false            // ImagePicker表示有無
     @State private var isShowMap = false                    // Mapの表示有無
-    @State private var isShowChangeSuccessAlert = false     // 変更確定アラート
-    @State private var isShowConfirmDeleteAlert = false     // 削除確認アラート
+    @State private var isShowCreateSuccessAlert = false     // 作成完了アラート
     
     // 変更する変数
-    let store: Stores
     @State private var uid = ""                             // UID
     @State private var uiImage: UIImage?                    // トップ画像
     @State private var isEnableScan = false                 // スキャンの可否
+//    @State private var profileImageUrl = ""                 // プロフィール画像
     @State private var storename = ""                       // 店舗名
     @State private var no = "0"                             // 店舗番号
     @State private var getPoint = "0"                       // 獲得ポイント
@@ -34,7 +35,7 @@ struct EditStoreInfoView: View {
     
     // ボタンの有効性
     var disabled: Bool {
-        getPoint.isEmpty
+        uid.isEmpty || no.isEmpty || getPoint.isEmpty || genre.isEmpty || pointX.isEmpty || pointY.isEmpty
     }
     
     var body: some View {
@@ -46,21 +47,8 @@ struct EditStoreInfoView: View {
                     } label: {
                         if let uiImage = uiImage {
                             Icon.CustomImage(imageSize: .xLarge, image: uiImage)
-                                .overlay {
-                                    Icon.CustomImageChangeCircle(imageSize: .xLarge)
-                                }
                         } else {
-                            if store.profileImageUrl != "" {
-                                Icon.CustomWebImage(imageSize: .xLarge, image: store.profileImageUrl)
-                                    .overlay {
-                                        Icon.CustomImageChangeCircle(imageSize: .xLarge)
-                                    }
-                            } else {
-                                Icon.CustomCircle(imageSize: .xLarge)
-                                    .overlay {
-                                        Icon.CustomImageChangeCircle(imageSize: .xLarge)
-                                    }
-                            }
+                            Icon.CustomCircle(imageSize: .xLarge)
                         }
                     }
                     
@@ -68,7 +56,7 @@ struct EditStoreInfoView: View {
                     HStack {
                         Text("UID")
                         Spacer()
-                        Text(store.uid)
+                        Text(uid)
                             .font(.caption)
                             .foregroundStyle(Color.gray)
                             .frame(width: 250)
@@ -127,7 +115,6 @@ struct EditStoreInfoView: View {
 //                            .focused($focus)
 //                            .frame(width: 100)
 //                    }
-//                    .padding()
                     InputText.InputPicker(editText: $genre, titleText: "ジャンル", explanationText: "店舗ジャンルを選択してください", pickers: genres)
                         .frame(width: 300)
                     
@@ -193,39 +180,23 @@ struct EditStoreInfoView: View {
                     
                     Button {
                         if let image = uiImage {
-                            persistAndDeleteImage(image: image)
+                            persistImage(image: image)
                         } else {
-                            updateStoreInfo(store: store, imageUrl: nil)
+                            persistStore(imageUrl: nil)
                         }
                     } label: {
-                        CustomCapsule(text: "変更", imageSystemName: nil, foregroundColor: disabled ? .gray : .black, textColor: .white, isStroke: false)
+                        CustomCapsule(text: "作成", imageSystemName: nil, foregroundColor: disabled ? .gray : .black, textColor: .white, isStroke: false)
                     }
                     .disabled(disabled)
-                    .padding(.bottom)
-                    
-                    Button {
-                        isShowConfirmDeleteAlert = true
-                    } label: {
-                        CustomCapsule(text: "店舗を削除", imageSystemName: nil, foregroundColor: .red, textColor: .white, isStroke: false)
-                    }
                     .padding(.bottom)
                 }
             }
         }
         .onAppear {
-            storename = store.storename
-            no = String(store.no)
-            isEnableScan = store.isEnableScan
-            getPoint = String(store.getPoint)
-            genre = store.genre
-            phoneNumber = store.phoneNumber
-            webURL = store.webURL
-            movieURL = store.movieURL
-            pointX = store.pointX
-            pointY = store.pointY
+            uid = generator(30)
         }
         .asBackButton()
-        .navigationTitle("店舗情報を変更")
+        .navigationTitle("新規店舗を作成")
         .navigationBarTitleDisplayMode(.inline)
         .fullScreenCover(isPresented: $isShowImagePicker) {
             ImagePicker(selectedImage: $uiImage)
@@ -238,77 +209,62 @@ struct EditStoreInfoView: View {
                        message: vm.errorMessage,
                        didAction: { vm.isShowError = false })
         .asSingleAlert(title: "",
-                       isShowAlert: $isShowChangeSuccessAlert,
-                       message: "変更しました。",
+                       isShowAlert: $isShowCreateSuccessAlert,
+                       message: "作成しました。",
                        didAction: {
-            isShowChangeSuccessAlert = false
+            isShowCreateSuccessAlert = false
             dismiss()
-        })
-        .asDestructiveAlert(title: "",
-                            isShowAlert: $isShowConfirmDeleteAlert,
-                            message: "この店舗を削除しますか？",
-                            buttonText: "削除",
-                            didAction: {
-            deleteStore()
-            dismiss()
-            isShowConfirmDeleteAlert = false
         })
     }
     
-    // MARK: - 店舗ユーザーの情報を更新
+    // MARK: - ランダムな文字列を作成
     /// - Parameters: なし
     /// - Returns: なし
-    private func updateStoreInfo(store: Stores, imageUrl: URL?) {
-        vm.onIndicator = true
-        var data: [String: Any] = [:]
-        
-        if uiImage != nil {
-            data = [
-                FirebaseConstants.storename: storename,
-                FirebaseConstants.no: no,
-                FirebaseConstants.genre: genre,
-                FirebaseConstants.phoneNumber: phoneNumber,
-                FirebaseConstants.webURL: webURL,
-                FirebaseConstants.movieURL: movieURL,
-                FirebaseConstants.profileImageUrl: imageUrl?.absoluteString ?? "",
-                FirebaseConstants.getPoint: Int(getPoint) ?? 1,
-                FirebaseConstants.isEnableScan: isEnableScan,
-                FirebaseConstants.pointX: pointX,
-                FirebaseConstants.pointY: pointY,
-            ]
-        } else {
-            data = [
-                FirebaseConstants.storename: storename,
-                FirebaseConstants.no: no,
-                FirebaseConstants.genre: genre,
-                FirebaseConstants.phoneNumber: phoneNumber,
-                FirebaseConstants.webURL: webURL,
-                FirebaseConstants.movieURL: movieURL,
-                FirebaseConstants.getPoint: Int(getPoint) ?? 1,
-                FirebaseConstants.isEnableScan: isEnableScan,
-                FirebaseConstants.pointX: pointX,
-                FirebaseConstants.pointY: pointY,
-            ]
+    func generator(_ length: Int) -> String {
+        let letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+        var randomString = ""
+        for _ in 0 ..< length {
+            randomString += String(letters.randomElement()!)
         }
-        // ユーザー情報を更新
-        vm.updateStore(document: store.uid, data: data)
+        return randomString
+    }
+    
+    // MARK: - 店舗を保存
+    /// - Parameters:
+    ///   - imageUrl: 画像URL
+    /// - Returns: なし
+    private func persistStore(imageUrl: URL?) {
+        vm.onIndicator = true
+        
+        let data = [
+            FirebaseConstants.uid: uid,
+            FirebaseConstants.storename: storename,
+            FirebaseConstants.no: no,
+            FirebaseConstants.genre: genre,
+            FirebaseConstants.phoneNumber: phoneNumber,
+            FirebaseConstants.webURL: webURL,
+            FirebaseConstants.movieURL: movieURL,
+            FirebaseConstants.profileImageUrl: imageUrl?.absoluteString ?? "",
+            FirebaseConstants.getPoint: Int(getPoint) ?? 1,
+            FirebaseConstants.isEnableScan: isEnableScan,
+            FirebaseConstants.pointX: pointX,
+            FirebaseConstants.pointY: pointY,
+        ] as [String : Any]
+        
+        vm.persistStore(document: uid, data: data)
         
         vm.onIndicator = false
-        isShowChangeSuccessAlert = true
+        self.isShowCreateSuccessAlert = true
     }
     
     // MARK: - 画像を保存
     /// - Parameters:
     ///   - image: トップ画像
     /// - Returns: なし
-    private func persistAndDeleteImage(image: UIImage?) {
+    private func persistImage(image: UIImage?) {
         vm.onIndicator = true
-        let path = "\(FirebaseConstants.stores)/\(store.uid)"
         
-        // 画像削除
-        vm.deleteImage(withPath: path)
-        
-        let ref = FirebaseManager.shared.storage.reference(withPath: path)
+        let ref = FirebaseManager.shared.storage.reference(withPath: "\(FirebaseConstants.stores)/\(uid)")
         guard let imageData = image?.jpegData(compressionQuality: 0.5) else { return }
         
         ref.putData(imageData, metadata: nil) { _, error in
@@ -323,23 +279,12 @@ struct EditStoreInfoView: View {
                     return
                 }
                 guard let url = url else { return }
-                updateStoreInfo(store: store, imageUrl: url)
+                persistStore(imageUrl: url)
             }
         }
-    }
-    
-    // MARK: - 店舗を削除
-    /// - Parameters: なし
-    /// - Returns: なし
-    private func deleteStore() {
-        // 画像削除
-        vm.deleteImage(withPath: "\(FirebaseConstants.stores)/\(store.uid)")
-        
-        // ユーザー情報削除
-        vm.deleteStore(document: store.uid)
     }
 }
 
 #Preview {
-    EditStoreInfoView(store: previewOfStores)
+    CreateStoresView()
 }

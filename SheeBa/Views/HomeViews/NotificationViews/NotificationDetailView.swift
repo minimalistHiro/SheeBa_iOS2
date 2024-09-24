@@ -25,6 +25,11 @@ struct NotificationDetailView: View {
                     .bold()
                     .padding(.bottom)
                 
+//                Text(notification.username)
+//                    .font(.headline)
+//                    .padding(.horizontal)
+//                    .padding(.bottom)
+                
                 Text("\(vm.dateFormat(notification.timestamp.dateValue())) \(vm.hourFormat(notification.timestamp.dateValue()))")
                     .padding(.horizontal)
                     .frame(width: UIScreen.main.bounds.width, alignment: .leading)
@@ -58,20 +63,23 @@ struct NotificationDetailView: View {
                     .frame(height: 100)
             }
             .overlay {
-                if let currentUser = vm.currentUser, currentUser.isOwner {
-                    VStack {
-                        Spacer()
-                        Button {
-                            isShowDeleteNotificationAlert = true
-                        } label: {
-                            CustomCapsule(text: "削除",
-                                          imageSystemName: nil,
-                                          foregroundColor: .red,
-                                          textColor: .white,
-                                          isStroke: false)
+                if let currentUser = vm.currentUser {
+                    // オーナー、もしくは自身が作成した店舗オーナー
+                    if currentUser.isOwner || (currentUser.isStoreOwner && notification.uid == vm.currentUser?.uid)  {
+                        VStack {
+                            Spacer()
+                            Button {
+                                isShowDeleteNotificationAlert = true
+                            } label: {
+                                CustomCapsule(text: "削除",
+                                              imageSystemName: nil,
+                                              foregroundColor: .red,
+                                              textColor: .white,
+                                              isStroke: false)
+                            }
                         }
+                        .padding(.bottom, 20)
                     }
-                    .padding(.bottom, 20)
                 }
             }
         }
@@ -88,7 +96,7 @@ struct NotificationDetailView: View {
                 UIApplication.shared.applicationIconBadgeNumber = userSetting.badgeCount
             }
         }
-        .navigationTitle("お知らせ")
+        .navigationTitle(notification.username)
         .navigationBarTitleDisplayMode(.inline)
         .asBackButton()
         .asDestructiveAlert(title: "",

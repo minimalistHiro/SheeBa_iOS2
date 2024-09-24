@@ -200,6 +200,8 @@ struct CameraView: View {
                                 return
                             }
                             
+                            // TODO: - スキャンプロセスを改造する。
+                            
                             // 店舗ポイント情報が以前に一度も取得していなかった場合
                             guard let data = snapshot?.data() else {
                                 if chatUser.isStore {

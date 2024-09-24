@@ -962,6 +962,24 @@ final class ViewModel: ObservableObject {
         }
     }
     
+    /// 店舗を保存
+    /// - Parameters:
+    ///   - document: ドキュメント
+    ///   - data: データ
+    /// - Returns: なし
+    func persistStore(document: String, data: [String: Any]) {
+        let document = FirebaseManager.shared.firestore
+            .collection(FirebaseConstants.stores)
+            .document(document)
+        
+        document.setData(data) { error in
+            if error != nil {
+                self.handleError("店舗の保存に失敗しました。", error: error)
+                return
+            }
+        }
+    }
+    
     // MARK: - Update
     
     /// ユーザー情報を更新
@@ -1026,6 +1044,20 @@ final class ViewModel: ObservableObject {
             .document(document2)
             .updateData(data as [AnyHashable : Any]) { error in
                 self.handleNetworkError(error: error, errorMessage: "お知らせの更新に失敗しました。")
+            }
+    }
+    
+    /// 店舗を更新
+    /// - Parameters:
+    ///   - document: ドキュメント
+    ///   - data: データ
+    /// - Returns: なし
+    func updateStore(document: String, data: [String: Any]) {
+        FirebaseManager.shared.firestore
+            .collection(FirebaseConstants.stores)
+            .document(document)
+            .updateData(data as [AnyHashable : Any]) { error in
+                self.handleNetworkError(error: error, errorMessage: "店舗の更新に失敗しました。")
             }
     }
     
@@ -1169,6 +1201,19 @@ final class ViewModel: ObservableObject {
                 }
             }
         }
+    }
+    
+    /// 店舗を削除
+    /// - Parameters:
+    ///   - document: ドキュメント
+    /// - Returns: なし
+    func deleteStore(document: String) {
+        FirebaseManager.shared.firestore
+            .collection(FirebaseConstants.stores)
+            .document(document)
+            .delete { error in
+                self.handleNetworkError(error: error, errorMessage: String.failureDeleteStore)
+            }
     }
     
     /// 認証情報削除

@@ -138,7 +138,7 @@ struct MapView: View {
             .padding(.bottom, 20)
         }
         .onAppear {
-            setRegion(coordinate: CLLocationCoordinate2D(latitude: 35.83306, longitude: 139.69230))
+            setRegion(coordinate: CLLocationCoordinate2D(latitude: Setting.mapLatitude, longitude: Setting.mapLongitude))
             DispatchQueue.main.async {
                 fetchAllStoreUsers()
             }

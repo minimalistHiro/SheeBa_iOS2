@@ -21,14 +21,29 @@ struct NotificationListView: View {
                         NotificationDetailView(notification: notification)
                     } label: {
                         ZStack(alignment: .leading) {
-                            Text(notification.title)
-//                                .onLongPressGesture {
-//                                    // オーナーアカウントのみダイアログを表示
-//                                    if let currentUser = vm.currentUser, currentUser.isOwner {
-//                                        dialogNotificationTitle = notification.title
-//                                        isShowDialog = true
-//                                    }
-//                                }
+                            HStack(spacing: 16) {
+                                if (notification.profileImageUrl != "") {
+                                    Icon.CustomWebImage(imageSize: .medium, image: notification.profileImageUrl)
+                                } else {
+                                    Icon.CustomCircle(imageSize: .medium)
+                                }
+                                
+                                VStack(alignment: .leading, spacing: 10) {
+                                    Text(notification.title)
+                                    
+                                    Text(notification.username)
+                                        .font(.caption)
+                                        .foregroundStyle(Color.gray)
+                                }
+                                //                                .onLongPressGesture {
+                                //                                    // オーナーアカウントのみダイアログを表示
+                                //                                    if let currentUser = vm.currentUser, currentUser.isOwner {
+                                //                                        dialogNotificationTitle = notification.title
+                                //                                        isShowDialog = true
+                                //                                    }
+                                //                                }
+                                
+                            }
                             // 未読の場合、赤い印
                             if !notification.isRead {
                                 HStack {

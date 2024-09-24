@@ -134,6 +134,21 @@ struct AccountView: View {
                     } label: {
                         HStack {
                             Text("ユーザー属性分析")
+                                .foregroundStyle(.blue)
+                                .dynamicTypeSize(.medium)
+                            Spacer()
+                        }
+                    }
+                }
+                
+                if let currentUser = vm.currentUser, currentUser.isOwner {
+                    // 新規店舗を作成
+                    NavigationLink {
+                        CreateStoresView()
+                    } label: {
+                        HStack {
+                            Text("新規店舗を作成")
+                                .foregroundStyle(.blue)
                                 .dynamicTypeSize(.medium)
                             Spacer()
                         }
@@ -143,10 +158,11 @@ struct AccountView: View {
                 if let currentUser = vm.currentUser, currentUser.isOwner {
                     // 店舗管理
                     NavigationLink {
-                        StoreInfoListView()
+                        StoreEditListView()
                     } label: {
                         HStack {
                             Text("店舗管理")
+                                .foregroundStyle(.blue)
                                 .dynamicTypeSize(.medium)
                             Spacer()
                         }

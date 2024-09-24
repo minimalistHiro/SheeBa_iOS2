@@ -64,6 +64,10 @@
 		FD14C99F2BC2B3E90071A8F4 /* StoreDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD14C99E2BC2B3E90071A8F4 /* StoreDetailView.swift */; };
 		FD1BFDD92B4A7E780049CC53 /* UIViewExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD1BFDD82B4A7E780049CC53 /* UIViewExtension.swift */; };
 		FD1BFDDB2B4A7FF70049CC53 /* ActivityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD1BFDDA2B4A7FF70049CC53 /* ActivityView.swift */; };
+		FD2D21E52C990E0C00CE2C6E /* Stores.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD2D21E42C990E0C00CE2C6E /* Stores.swift */; };
+		FD2D21E72C99118500CE2C6E /* CreateStoresView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD2D21E62C99118500CE2C6E /* CreateStoresView.swift */; };
+		FD2D21E92CA282D200CE2C6E /* CreateMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD2D21E82CA282D200CE2C6E /* CreateMapView.swift */; };
+		FD2D21EB2CA2908300CE2C6E /* StoreEditListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD2D21EA2CA2908300CE2C6E /* StoreEditListView.swift */; };
 		FD2DF3202B845DF90019E01D /* CreateAdvertisementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD2DF31F2B845DF90019E01D /* CreateAdvertisementView.swift */; };
 		FD2DF3232B846DF70019E01D /* AdvertisementDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD2DF3222B846DF70019E01D /* AdvertisementDetailView.swift */; };
 		FD2DF3262B848FEA0019E01D /* StoreInfoListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD2DF3252B848FEA0019E01D /* StoreInfoListView.swift */; };
@@ -174,6 +178,10 @@
 		FD14C99E2BC2B3E90071A8F4 /* StoreDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreDetailView.swift; sourceTree = "<group>"; };
 		FD1BFDD82B4A7E780049CC53 /* UIViewExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIViewExtension.swift; sourceTree = "<group>"; };
 		FD1BFDDA2B4A7FF70049CC53 /* ActivityView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityView.swift; sourceTree = "<group>"; };
+		FD2D21E42C990E0C00CE2C6E /* Stores.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stores.swift; sourceTree = "<group>"; };
+		FD2D21E62C99118500CE2C6E /* CreateStoresView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateStoresView.swift; sourceTree = "<group>"; };
+		FD2D21E82CA282D200CE2C6E /* CreateMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateMapView.swift; sourceTree = "<group>"; };
+		FD2D21EA2CA2908300CE2C6E /* StoreEditListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreEditListView.swift; sourceTree = "<group>"; };
 		FD2DF31F2B845DF90019E01D /* CreateAdvertisementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateAdvertisementView.swift; sourceTree = "<group>"; };
 		FD2DF3222B846DF70019E01D /* AdvertisementDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvertisementDetailView.swift; sourceTree = "<group>"; };
 		FD2DF3252B848FEA0019E01D /* StoreInfoListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreInfoListView.swift; sourceTree = "<group>"; };
@@ -331,6 +339,7 @@
 				FD38C1542B6A136E00714172 /* AlertNotification.swift */,
 				FDDF44642B7B380300156558 /* NotificationModel.swift */,
 				FDD4B41D2B834942002729A1 /* Advertisement.swift */,
+				FD2D21E42C990E0C00CE2C6E /* Stores.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -480,7 +489,10 @@
 		FD2DF3242B848FCA0019E01D /* OwnerViews */ = {
 			isa = PBXGroup;
 			children = (
-				FD2DF3252B848FEA0019E01D /* StoreInfoListView.swift */,
+				FDDF44612B79FAC200156558 /* CreateNotificationView.swift */,
+				FD2D21E62C99118500CE2C6E /* CreateStoresView.swift */,
+				FD2D21E82CA282D200CE2C6E /* CreateMapView.swift */,
+				FD2D21EA2CA2908300CE2C6E /* StoreEditListView.swift */,
 				FD2DF3272B8499520019E01D /* EditStoreInfoView.swift */,
 			);
 			path = OwnerViews;
@@ -490,7 +502,6 @@
 			isa = PBXGroup;
 			children = (
 				FD3E68782B4D616200436F0A /* QRCodeView.swift */,
-				FDDF44612B79FAC200156558 /* CreateNotificationView.swift */,
 				FD2DF31F2B845DF90019E01D /* CreateAdvertisementView.swift */,
 			);
 			path = OwnerViews;
@@ -505,6 +516,7 @@
 				FD1161D92B468FD4000B0064 /* SetUpPasswordView.swift */,
 				FD1161DF2B469007000B0064 /* ResetPasswordView.swift */,
 				FD1161EB2B46938C000B0064 /* QRCodeAndCameraView.swift */,
+				FD2DF3252B848FEA0019E01D /* StoreInfoListView.swift */,
 			);
 			path = Trash;
 			sourceTree = "<group>";
@@ -665,6 +677,7 @@
 				FD1161F22B4693C9000B0064 /* CameraView.swift in Sources */,
 				FD058C092B468DB900D4F467 /* SingleAlertModifier.swift in Sources */,
 				FD1161F02B4693B6000B0064 /* StoreQRCodeView.swift in Sources */,
+				FD2D21E52C990E0C00CE2C6E /* Stores.swift in Sources */,
 				FD1161DE2B468FF8000B0064 /* SendEmailView.swift in Sources */,
 				FD1BFDD92B4A7E780049CC53 /* UIViewExtension.swift in Sources */,
 				FD2FA5932B70CBA500580C36 /* QRCodeScanner.swift in Sources */,
@@ -673,6 +686,7 @@
 				FD058C112B468E1A00D4F467 /* DestructiveAlertModifier.swift in Sources */,
 				FD1161EC2B46938C000B0064 /* QRCodeAndCameraView.swift in Sources */,
 				FD058C1F2B468EE400D4F467 /* ChatMessage.swift in Sources */,
+				FD2D21EB2CA2908300CE2C6E /* StoreEditListView.swift in Sources */,
 				FD058C032B468D7C00D4F467 /* BackButtonModifier.swift in Sources */,
 				FD4122C22B4823920050F0BC /* ConfirmEmailView.swift in Sources */,
 				FD058C192B468E9300D4F467 /* ChatUser.swift in Sources */,
@@ -686,11 +700,13 @@
 				FD058C1B2B468EB200D4F467 /* FirebaseManager.swift in Sources */,
 				FD1161D82B468FC6000B0064 /* SetUpEmailView.swift in Sources */,
 				FD2FA5952B70CCFD00580C36 /* QRScannerViewController.swift in Sources */,
+				FD2D21E72C99118500CE2C6E /* CreateStoresView.swift in Sources */,
 				FD4958512B4A26C700FE41EC /* NotConfirmEmailView.swift in Sources */,
 				FD4122BB2B47BA9D0050F0BC /* MailCompose.swift in Sources */,
 				FD0C49F22B875BC9004FA165 /* Sounds.swift in Sources */,
 				FD50703D2B4B9A4B008C42E7 /* UpdateImageView.swift in Sources */,
 				FD1BFDDB2B4A7FF70049CC53 /* ActivityView.swift in Sources */,
+				FD2D21E92CA282D200CE2C6E /* CreateMapView.swift in Sources */,
 				FD4122C02B47C8E90050F0BC /* SMSAuthView.swift in Sources */,
 				FD2DF3282B8499520019E01D /* EditStoreInfoView.swift in Sources */,
 				FD1161DC2B468FE9000B0064 /* LoginView.swift in Sources */,

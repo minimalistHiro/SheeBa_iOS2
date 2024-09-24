@@ -96,7 +96,7 @@ struct CreateNotificationView: View {
                             (granted, error) in
                             if granted {
                                 //通知が許可されている場合の処理
-                                makeNotification(title: title, body: text)
+//                                makeNotification(title: title, body: text)
                             } else {
                                 //通知が拒否されている場合、1秒後に表示を戻す
                                 DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
@@ -155,8 +155,11 @@ struct CreateNotificationView: View {
         vm.onIndicator = true
         
         let data = [
+            FirebaseConstants.uid: vm.currentUser?.uid ?? "",
             FirebaseConstants.title: title,
             FirebaseConstants.text: text,
+            FirebaseConstants.username: vm.currentUser?.username ?? "",
+            FirebaseConstants.profileImageUrl: vm.currentUser?.profileImageUrl ?? "",
             FirebaseConstants.isRead: false,
             FirebaseConstants.url: url,
             FirebaseConstants.imageUrl: imageUrl?.absoluteString ?? "",
@@ -201,23 +204,23 @@ struct CreateNotificationView: View {
     ///   - title: タイトル
     ///   - body: 通知テキスト
     /// - Returns: なし
-    private func makeNotification(title: String, body: String) {
-        //通知タイミングを指定
-        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 5, repeats: false)
-        
-//        var badge = NSNu
-        //通知コンテンツの作成
-        let content = UNMutableNotificationContent()
-        content.title = title
-        content.body = body
-        content.sound = UNNotificationSound.default
-        content.badge = 1
-        userSetting.badgeCount = content.badge as! Int
-        
-        //通知リクエストを作成
-        let request = UNNotificationRequest(identifier: title, content: content, trigger: trigger)
-        UNUserNotificationCenter.current().add(request, withCompletionHandler: nil)
-    }
+//    private func makeNotification(title: String, body: String) {
+//        //通知タイミングを指定
+//        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 5, repeats: false)
+//        
+////        var badge = NSNu
+//        //通知コンテンツの作成
+//        let content = UNMutableNotificationContent()
+//        content.title = title
+//        content.body = body
+//        content.sound = UNNotificationSound.default
+//        content.badge = 1
+//        userSetting.badgeCount = content.badge as! Int
+//        
+//        //通知リクエストを作成
+//        let request = UNNotificationRequest(identifier: title, content: content, trigger: trigger)
+//        UNUserNotificationCenter.current().add(request, withCompletionHandler: nil)
+//    }
 }
 
 #Preview {

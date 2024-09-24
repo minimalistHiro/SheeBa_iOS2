@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import MapKit
 
 final class Setting {
     
@@ -16,6 +17,8 @@ final class Setting {
     static let getPointFromStore: String = "1"                  // 店舗からの取得ポイント
     static let rankingCount: Int = 10                           // ランキング表示ユーザー
     static let ownerRankingCount: Int = 30                      // オーナーアカウントランキング表示ユーザー
+    static let mapLatitude: CLLocationDegrees = 35.83306        // Mapに表示する中心のX座標
+    static let mapLongitude: CLLocationDegrees = 139.69230      // Mapに表示する中心のY座標
     
     // MARK: - URL
     static let privacyPolicyURL: String = "https://www.shibaginzadori.com/?page_id=1070"// プライバシーポリシーURL

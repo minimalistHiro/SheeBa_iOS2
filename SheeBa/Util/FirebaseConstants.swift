@@ -69,6 +69,10 @@ static let timestamp = "timestamp"
     static let advertisements = "advertisements"
     static let url = "url"
     
+    // Stores
+    static let stores = "stores"
+    static let storename = "storename"
+    
     // DBに保存しないデータ
     static let rankign = "rankign"
 }
