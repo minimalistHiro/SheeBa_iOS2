@@ -24,6 +24,7 @@ final class ViewModel: ObservableObject {
     @Published var friends = [Friend]()                         // 全友達情報
     @Published var storePoint: StorePoint?                      // 特定の店舗ポイント情報
     @Published var storePoints = [StorePoint]()                 // 全店舗ポイント情報
+    @Published var store: Stores?                               // 取得店舗
     @Published var alertNotification: AlertNotification?        // 速報
     @Published var notifications = [NotificationModel]()        // 全お知らせ
     @Published var advertisements = [Advertisement]()           // 全広告

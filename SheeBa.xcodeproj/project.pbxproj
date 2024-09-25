@@ -407,7 +407,6 @@
 				FDDF44602B79F5B600156558 /* NotificationViews */,
 				FD1255AA2B72192F00724EFD /* MenuButtonViews */,
 				FD2DF3212B846DDA0019E01D /* AdvertisementViews */,
-				FD058BC22B468C7400D4F467 /* StoreViews */,
 				FD3E68772B4D610F00436F0A /* OwnerViews */,
 			);
 			path = HomeViews;
@@ -458,17 +457,10 @@
 			path = UIKit;
 			sourceTree = "<group>";
 		};
-		FD058BC22B468C7400D4F467 /* StoreViews */ = {
-			isa = PBXGroup;
-			children = (
-				FD1161EF2B4693B6000B0064 /* StoreQRCodeView.swift */,
-			);
-			path = StoreViews;
-			sourceTree = "<group>";
-		};
 		FD1255AA2B72192F00724EFD /* MenuButtonViews */ = {
 			isa = PBXGroup;
 			children = (
+				FD1161EF2B4693B6000B0064 /* StoreQRCodeView.swift */,
 				FD1161E32B46903A000B0064 /* MoneyTransferView.swift */,
 				FD1161E52B46904D000B0064 /* CreateNewMessageView.swift */,
 				FD1161E72B46936D000B0064 /* ChatLogView.swift */,

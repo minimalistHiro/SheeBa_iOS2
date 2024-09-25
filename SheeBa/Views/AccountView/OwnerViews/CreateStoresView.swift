@@ -21,8 +21,7 @@ struct CreateStoresView: View {
     // 変更する変数
     @State private var uid = ""                             // UID
     @State private var uiImage: UIImage?                    // トップ画像
-    @State private var isEnableScan = false                 // スキャンの可否
-//    @State private var profileImageUrl = ""                 // プロフィール画像
+    @State private var isEnableScan = true                  // スキャンの可否
     @State private var storename = ""                       // 店舗名
     @State private var no = "0"                             // 店舗番号
     @State private var getPoint = "0"                       // 獲得ポイント
@@ -239,7 +238,7 @@ struct CreateStoresView: View {
         let data = [
             FirebaseConstants.uid: uid,
             FirebaseConstants.storename: storename,
-            FirebaseConstants.no: no,
+            FirebaseConstants.no: Int(no) ?? 0,
             FirebaseConstants.genre: genre,
             FirebaseConstants.phoneNumber: phoneNumber,
             FirebaseConstants.webURL: webURL,

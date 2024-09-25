@@ -10,7 +10,8 @@ import SwiftUI
 struct GetPointView: View {
     
     @Environment(\.dismiss) var dismiss
-    let chatUser: ChatUser?
+//    let chatUser: ChatUser?
+    let store: Stores?
     let getPoint: String
     @Binding var isSameStoreScanError: Bool
     @Binding var isQrCodeScanError: Bool
@@ -23,12 +24,12 @@ struct GetPointView: View {
                 // トップ画像
                 if !isQrCodeScanError {
                     VStack {
-                        if let image = chatUser?.profileImageUrl, image != "" {
+                        if let image = store?.profileImageUrl, image != "" {
                             Icon.CustomWebImage(imageSize: .large, image: image)
                         } else {
                             Icon.CustomCircle(imageSize: .large)
                         }
-                        Text(chatUser?.username ?? "")
+                        Text(store?.storename ?? "")
                             .font(.title2)
                             .bold()
                             .dynamicTypeSize(.medium)
@@ -84,5 +85,5 @@ struct GetPointView: View {
 }
 
 #Preview {
-    GetPointView(chatUser: nil, getPoint: "1", isSameStoreScanError: .constant(false), isQrCodeScanError: .constant(false))
+    GetPointView(store: nil, getPoint: "1", isSameStoreScanError: .constant(false), isQrCodeScanError: .constant(false))
 }

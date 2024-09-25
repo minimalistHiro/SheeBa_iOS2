@@ -13,7 +13,7 @@ struct StoreQRCodeView: View {
     @State private var qrCodeImage: UIImage?
     @State private var rect: CGRect = .zero                 // スキャン範囲
     @State private var uiImage: UIImage? = nil
-    @State private var isShowActivityView = false
+    @State private var isShowActivityView = false           // アクティビティ画面表示有無
     
     @Binding var isUserCurrentryLoggedOut: Bool
     

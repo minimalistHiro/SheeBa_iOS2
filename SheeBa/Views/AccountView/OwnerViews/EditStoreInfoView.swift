@@ -16,6 +16,10 @@ struct EditStoreInfoView: View {
     @State private var isShowMap = false                    // Mapの表示有無
     @State private var isShowChangeSuccessAlert = false     // 変更確定アラート
     @State private var isShowConfirmDeleteAlert = false     // 削除確認アラート
+    @State private var isShowActivityView = false           // アクティビティ画面表示有無
+    @State private var qrCodeImage: UIImage?                // QRコード画像
+    @State private var shareImage: UIImage?                 // シェア画面用画像
+    @State private var rect: CGRect = .zero                 // スキャン範囲
     
     // 変更する変数
     let store: Stores
@@ -35,6 +39,11 @@ struct EditStoreInfoView: View {
     // ボタンの有効性
     var disabled: Bool {
         getPoint.isEmpty
+    }
+    
+    // シェアボタンの有効性
+    var disabledShareButton: Bool {
+        qrCodeImage == nil
     }
     
     var body: some View {
@@ -75,6 +84,53 @@ struct EditStoreInfoView: View {
                     }
                     .padding()
                     
+                    Rectangle()
+                        .foregroundStyle(.white)
+                        .frame(width: 180, height: 180)
+                        .cornerRadius(20)
+                        .shadow(radius: 7, x: 0, y: 0)
+                        .background(RectangleGetter(rect: $rect))
+                        .overlay {
+                            VStack {
+                                if vm.onIndicator {
+                                    ScaleEffectIndicator(onIndicator: $vm.onIndicator)
+                                } else {
+                                    if let qrCodeImage {
+                                        Image(uiImage: qrCodeImage)
+                                            .resizable()
+                                            .scaledToFit()
+                                            .frame(width: 150, height: 150)
+                                    } else {
+                                        VStack {
+                                            Text("データを読み込めませんでした。")
+                                                .font(.callout)
+                                            Button {
+                                                qrCodeImage = vm.generateQRCode(inputText: store.uid)
+                                            } label: {
+                                                Image(systemName: "arrow.clockwise")
+                                                    .resizable()
+                                                    .scaledToFit()
+                                                    .frame(width: 20)
+                                            }
+                                        }
+                                        .frame(width: 150, height: 150)
+                                    }
+                                }
+                            }
+                        }
+                    
+                    Button {
+                        let scenes = UIApplication.shared.connectedScenes
+                        let windowScenes = scenes.first as? UIWindowScene
+                        if let uiImage = windowScenes?.windows[0].rootViewController?.view!.getImage(rect: self.rect) {
+                            self.shareImage = uiImage
+                            isShowActivityView = true
+                        }
+                    } label: {
+                        CustomCapsule(text: "QRコードを共有", imageSystemName: "square.and.arrow.up", foregroundColor: disabled ? .gray : .black, textColor: .white, isStroke: false)
+                    }
+                    .disabled(disabledShareButton)
+                    
                     // 店舗名
                     HStack {
                         Text("店舗名")
@@ -113,21 +169,6 @@ struct EditStoreInfoView: View {
                     }
                     .padding()
                     
-//                    TextField("獲得ポイント", text: $getPoint)
-//                        .keyboardType(.numberPad)
-//                        .focused($focus)
-//                        .frame(width: 20)
-//                        .padding()
-                    
-                    // ジャンル
-//                    HStack {
-//                        Text("ジャンル")
-//                        Spacer()
-//                        TextField("ジャンル", text: $genre)
-//                            .focused($focus)
-//                            .frame(width: 100)
-//                    }
-//                    .padding()
                     InputText.InputPicker(editText: $genre, titleText: "ジャンル", explanationText: "店舗ジャンルを選択してください", pickers: genres)
                         .frame(width: 300)
                     
@@ -223,6 +264,12 @@ struct EditStoreInfoView: View {
             movieURL = store.movieURL
             pointX = store.pointX
             pointY = store.pointY
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                self.qrCodeImage = vm.generateQRCode(inputText: store.uid)
+            }
+        }
+        .sheet(isPresented: $isShowActivityView) {
+            ActivityView(activityItems: [shareImage as Any], applicationActivities: nil)
         }
         .asBackButton()
         .navigationTitle("店舗情報を変更")

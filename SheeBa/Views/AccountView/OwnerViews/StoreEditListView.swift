@@ -101,7 +101,7 @@ struct StoreEditListView: View {
                 
                 documentsSnapshot?.documents.forEach({ snapshot in
                     let data = snapshot.data()
-                    let store = Stores(data: data)
+//                    let store = Stores(data: data)
                     
                     stores.append(.init(data: data))
                 })

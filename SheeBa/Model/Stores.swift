@@ -10,7 +10,7 @@ import FirebaseFirestore
 import FirebaseFirestoreSwift
 
 struct Stores: Hashable, Identifiable {
-    @DocumentID var id: String?
+    var id: String { uid }
     let uid: String
     let storename: String
     let no: Int
