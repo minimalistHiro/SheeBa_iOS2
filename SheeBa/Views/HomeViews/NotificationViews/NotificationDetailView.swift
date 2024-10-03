@@ -31,6 +31,7 @@ struct NotificationDetailView: View {
 //                    .padding(.bottom)
                 
                 Text("\(vm.dateFormat(notification.timestamp.dateValue())) \(vm.hourFormat(notification.timestamp.dateValue()))")
+//                Text(notification.date)
                     .padding(.horizontal)
                     .frame(width: UIScreen.main.bounds.width, alignment: .leading)
                     .font(.caption)

@@ -12,19 +12,17 @@ struct HomeView: View {
     
     @ObservedObject var vm = ViewModel()
     @ObservedObject var userSetting = UserSetting()
+    @State private var storePoints = [StorePoint]()         // 自分が取得した店舗ポイント情報
     @State private var isShowQRCodeView = false             // QRCodeView表示有無
     @State private var isShowSignOutAlert = false           // 強制サインアウトアラート
     @State private var isContainNotReadNotification = false // 未読のお知らせの有無
     
     @Binding var isUserCurrentryLoggedOut: Bool
     
-//    init(isUserCurrentryLoggedOut: Binding<Bool>) {
-//        self._isUserCurrentryLoggedOut = isUserCurrentryLoggedOut
-//        if let isStore = vm.currentUser?.isStore, isStore {
-//            self.isStore = true
-//        }
-//        vm.isUserCurrentryLoggedOut = FirebaseManager.shared.auth.currentUser?.uid == nil
-//    }
+    init(isUserCurrentryLoggedOut: Binding<Bool>) {
+        self._isUserCurrentryLoggedOut = isUserCurrentryLoggedOut
+        fetchNotificationsAndSearchNotRead()
+    }
     
     var body: some View {
         NavigationStack {
@@ -43,9 +41,10 @@ struct HomeView: View {
                             .padding(.top, 10)
                         // TODO: - 第2弾
 //                        advertisements
+                        badgeView
+                            .padding(.top, 10)
                     }
                 }
-                // TODO: - 第2弾
                 //                .overlay {
                 //                    qrCodeButton
                 //                }
@@ -61,6 +60,7 @@ struct HomeView: View {
                     vm.fetchFriends()
                     vm.fetchStorePoints()
                     vm.fetchAlerts()
+                    fetchStorePoints()
                     fetchNotificationsAndSearchNotRead()
                     vm.fetchAdvertisements()
                 }
@@ -103,6 +103,7 @@ struct HomeView: View {
                 vm.fetchRecentMessages()
                 vm.fetchFriends()
                 vm.fetchStorePoints()
+                fetchStorePoints()
                 fetchNotificationsAndSearchNotRead()
             }
         }
@@ -323,22 +324,52 @@ struct HomeView: View {
 //        .padding()
 //    }
     
-    // MARK: - qrCodeButton
-    private var qrCodeButton: some View {
-        VStack {
-            Spacer()
-            Button {
-                isShowQRCodeView = true
-            } label: {
-                CustomCapsule(text: "QRコードで送る",
-                              imageSystemName: "qrcode",
-                              foregroundColor: .black,
-                              textColor: .white,
-                              isStroke: false)
+    // MARK: - badgeView
+    private var badgeView: some View {
+        Rectangle()
+            .foregroundColor(Color.white)
+            .frame(width: 300, height: 400)
+            .cornerRadius(20)
+            .shadow(radius: 7, x: 0, y: 0)
+            .overlay {
+                VStack {
+                    Text("獲得したバッジ")
+                        .padding(.vertical, 10)
+                    LazyVGrid(columns: Array(repeating: GridItem(), count: 4)) {
+                        ForEach(vm.eventStores) { store in
+                            if store.profileImageUrl != "" {
+                                Icon.CustomWebImage(imageSize: .small, image: store.profileImageUrl)
+                                    .opacity(isGetStorePointToday(store: store) ? 1 : 0.2)
+                                    .padding(.top, 10)
+                            } else {
+                                Icon.CustomCircle(imageSize: .small)
+                                    .opacity(isGetStorePointToday(store: store) ? 1 : 0.2)
+                                    .padding(.top, 10)
+                            }
+                        }
+                    }
+                    Spacer()
+                }
             }
-        }
-        .padding(.bottom)
+            .padding(.horizontal)
     }
+    
+    // MARK: - qrCodeButton
+//    private var qrCodeButton: some View {
+//        VStack {
+//            Spacer()
+//            Button {
+//                isShowQRCodeView = true
+//            } label: {
+//                CustomCapsule(text: "QRコードで送る",
+//                              imageSystemName: "qrcode",
+//                              foregroundColor: .black,
+//                              textColor: .white,
+//                              isStroke: false)
+//            }
+//        }
+//        .padding(.bottom)
+//    }
     
     // MARK: - MenuButton
     struct MenuButton: View {
@@ -371,23 +402,87 @@ struct HomeView: View {
             .collection(FirebaseConstants.notifications)
             .document(uid)
             .collection(FirebaseConstants.notification)
-            .getDocuments { documentsSnapshot, error in
+            .addSnapshotListener { querySnapshot, error in
                 if error != nil {
                     print("全お知らせの取得に失敗しました。")
                     return
                 }
-                
-                documentsSnapshot?.documents.forEach({ snapshot in
-                    let data = snapshot.data()
-                    let notification = NotificationModel(data: data)
-                    
-                    // 未読があった場合
-                    if !notification.isRead {
-                        
-                        isContainNotReadNotification = true
+//            .getDocuments { documentsSnapshot, error in
+//                if error != nil {
+//                    print("全お知らせの取得に失敗しました。")
+//                    return
+//                }
+                querySnapshot?.documentChanges.forEach({ change in
+                    if change.type == .added {
+                        do {
+                            let no = try change.document.data(as: NotificationModel.self)
+                            // 未読があった場合
+                            if !no.isRead {
+                                isContainNotReadNotification = true
+                            }
+                        } catch {
+                            vm.handleError(String.notFoundData, error: nil)
+                            return
+                        }
                     }
                 })
+//                documentsSnapshot?.documents.forEach({ snapshot in
+//                    let data = snapshot.data()
+//                    let notification = NotificationModel(data: data)
+//                    
+//                    // 未読があった場合
+//                    if !notification.isRead {
+//                        isContainNotReadNotification = true
+//                    }
+//                })
             }
+    }
+    
+    // MARK: - 店舗ポイント情報を取得
+    /// - Parameters: なし
+    /// - Returns: なし
+    private func fetchStorePoints() {
+        guard let uid = FirebaseManager.shared.auth.currentUser?.uid else { return }
+        self.storePoints.removeAll()
+        
+        FirebaseManager.shared.firestore
+            .collection(FirebaseConstants.storePoints)
+            .document(uid)
+            .collection(FirebaseConstants.user)
+            .order(by: FirebaseConstants.username)
+            .addSnapshotListener { querySnapshot, error in
+                if error != nil {
+                    print("店舗ポイント情報の取得に失敗しました。")
+                    return
+                }
+                
+                querySnapshot?.documentChanges.forEach({ change in
+                    if change.type == .added {
+                        do {
+                            let sp = try change.document.data(as: StorePoint.self)
+                            storePoints.append(sp)
+                        } catch {
+                            vm.handleError(String.notFoundData, error: nil)
+                            return
+                        }
+                    }
+                })
+                vm.fetchAllEventStores()
+            }
+    }
+    
+    // MARK: - イベント店舗ポイントが取得済みか否かを判断
+    /// - Parameters:
+    ///   - store: 店舗
+    /// - Returns: 全店舗ユーザーの中に取得した店舗ポイント情報を確保していた場合True、そうでない場合false。
+    private func isGetStorePointToday(store: Stores) -> Bool {
+        for storePoint in storePoints {
+            // 全店舗ユーザーの中に今日取得した店舗ポイント情報を確保していた場合True。
+            if store.uid == storePoint.uid {
+                return true
+            }
+        }
+        return false
     }
     
     // MARK: - サインアウト

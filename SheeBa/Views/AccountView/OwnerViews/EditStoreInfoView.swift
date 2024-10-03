@@ -26,6 +26,7 @@ struct EditStoreInfoView: View {
     @State private var uid = ""                             // UID
     @State private var uiImage: UIImage?                    // トップ画像
     @State private var isEnableScan = false                 // スキャンの可否
+    @State private var isEvent = false                      // イベント専用か否か
     @State private var storename = ""                       // 店舗名
     @State private var no = "0"                             // 店舗番号
     @State private var getPoint = "0"                       // 獲得ポイント
@@ -139,6 +140,12 @@ struct EditStoreInfoView: View {
                             .focused($focus)
                             .frame(width: 250)
                     }
+                    .padding()
+                    
+                    // イベント専用店舗
+                    Toggle(isOn: $isEvent, label: {
+                        Text("イベント専用")
+                    })
                     .padding()
                     
                     // 店舗番号
@@ -257,6 +264,7 @@ struct EditStoreInfoView: View {
             storename = store.storename
             no = String(store.no)
             isEnableScan = store.isEnableScan
+            isEvent = store.isEvent
             getPoint = String(store.getPoint)
             genre = store.genre
             phoneNumber = store.phoneNumber
@@ -312,7 +320,7 @@ struct EditStoreInfoView: View {
         if uiImage != nil {
             data = [
                 FirebaseConstants.storename: storename,
-                FirebaseConstants.no: no,
+                FirebaseConstants.no: Int(no) ?? 0,
                 FirebaseConstants.genre: genre,
                 FirebaseConstants.phoneNumber: phoneNumber,
                 FirebaseConstants.webURL: webURL,
@@ -320,19 +328,21 @@ struct EditStoreInfoView: View {
                 FirebaseConstants.profileImageUrl: imageUrl?.absoluteString ?? "",
                 FirebaseConstants.getPoint: Int(getPoint) ?? 1,
                 FirebaseConstants.isEnableScan: isEnableScan,
+                FirebaseConstants.isEvent: isEvent,
                 FirebaseConstants.pointX: pointX,
                 FirebaseConstants.pointY: pointY,
             ]
         } else {
             data = [
                 FirebaseConstants.storename: storename,
-                FirebaseConstants.no: no,
+                FirebaseConstants.no: Int(no) ?? 0,
                 FirebaseConstants.genre: genre,
                 FirebaseConstants.phoneNumber: phoneNumber,
                 FirebaseConstants.webURL: webURL,
                 FirebaseConstants.movieURL: movieURL,
                 FirebaseConstants.getPoint: Int(getPoint) ?? 1,
                 FirebaseConstants.isEnableScan: isEnableScan,
+                FirebaseConstants.isEvent: isEvent,
                 FirebaseConstants.pointX: pointX,
                 FirebaseConstants.pointY: pointY,
             ]

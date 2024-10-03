@@ -11,7 +11,8 @@ struct TodaysGetPointView: View {
     
     @ObservedObject var vm = ViewModel()
     @State private var storePoints = [StorePoint]()         // 自分が取得した店舗ポイント情報
-    @State private var storeUsers = [ChatUser]()            // 全店舗ユーザー
+    @State private var stores = [Stores]()                  // 全店舗
+//    @State private var storeUsers = [ChatUser]()            // 全店舗ユーザー
     
     var body: some View {
         NavigationStack {
@@ -30,7 +31,7 @@ struct TodaysGetPointView: View {
                                     .dynamicTypeSize(.medium)
                                     .foregroundStyle(Color.white)
                                     .padding(.bottom, 10)
-                                Text("\(countGetStorePointToday()) / \(storeUsers.count) 店舗獲得")
+                                Text("\(countGetStorePointToday()) / \(stores.count) 店舗獲得")
                                     .font(.system(size: 30))
                                     .bold()
                                     .dynamicTypeSize(.medium)
@@ -38,8 +39,8 @@ struct TodaysGetPointView: View {
                             }
                         }
                         .padding()
-                    ForEach(storeUsers, id: \.self) { user in
-                        CardView(storePoints: storePoints, user: user, isGetPoint: isGetStorePointToday(user: user))
+                    ForEach(stores, id: \.self) { store in
+                        CardView(storePoints: storePoints, store: store, isGetPoint: isGetStorePointToday(store: store))
                     }
                 }
                 .padding(.bottom, 20)
@@ -64,12 +65,13 @@ struct TodaysGetPointView: View {
         
         @ObservedObject var vm = ViewModel()
         let storePoints: [StorePoint]
-        let user: ChatUser
+        let store: Stores
+//        let user: ChatUser
         let isGetPoint: Bool
         
         var body: some View {
             NavigationLink {
-                StoreDetailView(store: user)
+                StoreDetailView(store: store)
             } label: {
                 ZStack {
                     Rectangle()
@@ -102,8 +104,8 @@ struct TodaysGetPointView: View {
                                     }
                                     
                                     // トップ画像
-                                    if user.profileImageUrl != "" {
-                                        Icon.CustomWebImage(imageSize: .medium, image: user.profileImageUrl)
+                                    if store.profileImageUrl != "" {
+                                        Icon.CustomWebImage(imageSize: .medium, image: store.profileImageUrl)
                                             .opacity(isGetPoint ? 1 : 0.4)
                                     } else {
                                         Icon.CustomCircle(imageSize: .medium)
@@ -112,7 +114,7 @@ struct TodaysGetPointView: View {
                                     
                                     Spacer()
                                     
-                                    Text(user.username)
+                                    Text(store.storename)
                                         .font(.title3)
                                         .bold()
                                         .dynamicTypeSize(.medium)
@@ -169,10 +171,10 @@ struct TodaysGetPointView: View {
     /// - Parameters: なし
     /// - Returns: なし
     private func fetchAllStoreUsers() {
-        storeUsers.removeAll()
+        stores.removeAll()
         
         FirebaseManager.shared.firestore
-            .collection(FirebaseConstants.users)
+            .collection(FirebaseConstants.stores)
             .getDocuments { documentsSnapshot, error in
                 if error != nil {
                     vm.handleNetworkError(error: error, errorMessage: String.failureFetchAllUser)
@@ -181,25 +183,25 @@ struct TodaysGetPointView: View {
                 
                 documentsSnapshot?.documents.forEach({ snapshot in
                     let data = snapshot.data()
-                    let user = ChatUser(data: data)
+                    let store = Stores(data: data)
                     
-                    // 追加するユーザーが店舗で且つ、SheeBa対応店舗の場合のみ追加する。
-                    if user.isStore, user.isEnableScan {
-                        storeUsers.append(.init(data: data))
+                    // スキャン可能の場合で且つ、イベント店舗以外の場合のみ追加する。
+                    if store.isEnableScan && !store.isEvent {
+                        stores.append(.init(data: data))
                     }
                 })
-                storeUsers.sort(by: {$0.no < $1.no})
+                stores.sort(by: {$0.no < $1.no})
             }
     }
     
     // MARK: - 店舗ポイント情報が本日取得済みか否かを判断
     /// - Parameters:
-    ///   - user: ユーザー
+    ///   - store: 店舗
     /// - Returns: 全店舗ユーザーの中に今日取得した店舗ポイント情報を確保していた場合True、そうでない場合false。
-    private func isGetStorePointToday(user: ChatUser) -> Bool {
+    private func isGetStorePointToday(store: Stores) -> Bool {
         for storePoint in storePoints {
             // 全店舗ユーザーの中に今日取得した店舗ポイント情報を確保していた場合True。
-            if user.uid == storePoint.uid && storePoint.date == vm.dateFormat(Date()) {
+            if store.uid == storePoint.uid && storePoint.date == vm.dateFormat(Date()) {
                 return true
             }
         }

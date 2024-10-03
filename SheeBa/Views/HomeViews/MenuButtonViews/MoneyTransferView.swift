@@ -23,6 +23,11 @@ struct MoneyTransferView: View {
         case friend
     }
     
+    init() {
+        vm.fetchRecentMessages()
+        vm.fetchFriends()
+    }
+    
     var body: some View {
         NavigationStack {
             HStack {
@@ -47,8 +52,8 @@ struct MoneyTransferView: View {
         .onAppear {
             if FirebaseManager.shared.auth.currentUser?.uid != nil {
                 vm.fetchCurrentUser()
-                vm.fetchRecentMessages()
-                vm.fetchFriends()
+//                vm.fetchRecentMessages()
+//                vm.fetchFriends()
             }
         }
         .onChange(of: tab) { value in

@@ -21,6 +21,7 @@ struct CreateStoresView: View {
     // 変更する変数
     @State private var uid = ""                             // UID
     @State private var uiImage: UIImage?                    // トップ画像
+    @State private var isEvent = false                      // イベント専用か否か
     @State private var isEnableScan = true                  // スキャンの可否
     @State private var storename = ""                       // 店舗名
     @State private var no = "0"                             // 店舗番号
@@ -70,6 +71,12 @@ struct CreateStoresView: View {
                             .focused($focus)
                             .frame(width: 250)
                     }
+                    .padding()
+                    
+                    // イベント専用店舗
+                    Toggle(isOn: $isEvent, label: {
+                        Text("イベント専用")
+                    })
                     .padding()
                     
                     // 店舗番号
@@ -246,6 +253,7 @@ struct CreateStoresView: View {
             FirebaseConstants.profileImageUrl: imageUrl?.absoluteString ?? "",
             FirebaseConstants.getPoint: Int(getPoint) ?? 1,
             FirebaseConstants.isEnableScan: isEnableScan,
+            FirebaseConstants.isEvent: isEvent,
             FirebaseConstants.pointX: pointX,
             FirebaseConstants.pointY: pointY,
         ] as [String : Any]

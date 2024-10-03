@@ -19,7 +19,9 @@ struct PinItem: Identifiable {
 struct MapView: View {
     
     @ObservedObject var vm = ViewModel()
-    @State private var storeUsers = [ChatUser]()            // 全店舗ユーザー
+    @State private var stores = [Stores]()                  // 全店舗
+//    @State private var storeUsers = [ChatUser]()            // 全店舗ユーザー
+    
     @State private var pinItems = [PinItem]()               // ピンアイテム
     @State private var region = MKCoordinateRegion()        // 座標領域
     @State private var selectedStoreUid = ""                //選択された店舗UID
@@ -49,7 +51,8 @@ struct MapView: View {
                     Button {
                         isShowStoreInfo = true
                         selectedStoreUid = item.uid
-                        vm.fetchUser(uid: item.uid)
+                        vm.fetchStore(uid: item.uid)
+//                        vm.fetchUser(uid: item.uid)
                     } label: {
                         MapPin(rect: CGRect(
                             x: 0,
@@ -102,7 +105,7 @@ struct MapView: View {
                                     Spacer()
                                     
                                     // トップ画像
-                                    if let image = vm.chatUser?.profileImageUrl, image != ""  {
+                                    if let image = vm.store?.profileImageUrl, image != ""  {
                                         Icon.CustomWebImage(imageSize: .medium, image: image)
                                     } else {
                                         Icon.CustomCircle(imageSize: .medium)
@@ -110,7 +113,7 @@ struct MapView: View {
                                     
                                     Spacer()
                                     
-                                    Text(vm.chatUser?.username ?? "芝店舗")
+                                    Text(vm.store?.storename ?? "")
                                         .font(.headline)
                                         .bold()
                                         .dynamicTypeSize(.medium)
@@ -122,7 +125,7 @@ struct MapView: View {
                                 
                                 // 詳細ボタン
                                 NavigationLink {
-                                    StoreDetailView(store: vm.chatUser)
+                                    StoreDetailView(store: vm.store)
                                 } label: {
                                     CustomCapsule(text: "詳細を見る",
                                                   imageSystemName: nil,
@@ -163,10 +166,10 @@ struct MapView: View {
     /// - Parameters: なし
     /// - Returns: なし
     private func fetchAllStoreUsers() {
-        storeUsers.removeAll()
+        stores.removeAll()
         
         FirebaseManager.shared.firestore
-            .collection(FirebaseConstants.users)
+            .collection(FirebaseConstants.stores)
             .getDocuments { documentsSnapshot, error in
                 if error != nil {
                     vm.handleNetworkError(error: error, errorMessage: String.failureFetchAllUser)
@@ -175,14 +178,14 @@ struct MapView: View {
                 
                 documentsSnapshot?.documents.forEach({ snapshot in
                     let data = snapshot.data()
-                    let user = ChatUser(data: data)
+                    let store = Stores(data: data)
                     
-                    // 追加するユーザーが店舗で且つ、SheeBa対応店舗の場合のみ追加する。
-                    if user.isStore, user.isEnableScan{
-                        storeUsers.append(.init(data: data))
+                    // スキャン可能の場合で且つ、イベント店舗以外の場合のみ追加する。
+                    if store.isEnableScan && !store.isEvent {
+                        stores.append(.init(data: data))
                     }
                 })
-                storeUsers.sort(by: {$0.no < $1.no})
+                stores.sort(by: {$0.no < $1.no})
                 fetchPinItems()
             }
     }
@@ -193,15 +196,15 @@ struct MapView: View {
     private func fetchPinItems() {
         pinItems.removeAll()
         
-        for storeUser in storeUsers {
-            if storeUser.pointX != "" || storeUser.pointY != "" {
+        for store in stores {
+            if store.pointX != "" || store.pointY != "" {
                 // 取得に失敗した場合、蕨駅の座標を取得。取得したY座標は、中心位置調整のため少しずらす。
-                pinItems.append(PinItem(uid: storeUser.uid,
+                pinItems.append(PinItem(uid: store.uid,
                                         coordinate:
-                        .init(latitude: Double(storeUser.pointY) ?? 139.69033,
-                              longitude: Double(storeUser.pointX) ?? 35.82809),
+                        .init(latitude: Double(store.pointY) ?? 35.82809,
+                              longitude: Double(store.pointX) ?? 139.69033),
                                         buttonSize: defaultButtonSize,
-                                        imageUrl: storeUser.profileImageUrl))
+                                        imageUrl: store.profileImageUrl))
             }
         }
     }

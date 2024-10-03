@@ -25,6 +25,7 @@ final class ViewModel: ObservableObject {
     @Published var storePoint: StorePoint?                      // 特定の店舗ポイント情報
     @Published var storePoints = [StorePoint]()                 // 全店舗ポイント情報
     @Published var store: Stores?                               // 取得店舗
+    @Published var eventStores = [Stores]()                     // 全イベント店舗
     @Published var alertNotification: AlertNotification?        // 速報
     @Published var notifications = [NotificationModel]()        // 全お知らせ
     @Published var advertisements = [Advertisement]()           // 全広告
@@ -122,7 +123,7 @@ final class ViewModel: ObservableObject {
                 self.handleNetworkError(error: error, errorMessage: String.failureFetchUser)
                 
                 guard let data = snapshot?.data() else {
-                    self.handleError(String.notFoundData, error: nil)
+                    self.handleError("このユーザーは退会しました。", error: nil)
                     return
                 }
                 self.chatUser = .init(data: data)
@@ -396,16 +397,78 @@ final class ViewModel: ObservableObject {
             .document(uid)
             .collection(FirebaseConstants.notification)
             .order(by: FirebaseConstants.timestamp, descending: true)
-            .getDocuments { documentsSnapshot, error in
+            .addSnapshotListener { querySnapshot, error in
                 if error != nil {
                     print("全お知らせの取得に失敗しました。")
+                    return
+                }
+//            .getDocuments { documentsSnapshot, error in
+//                if error != nil {
+//                    print("全お知らせの取得に失敗しました。")
+//                    return
+//                }
+                
+                querySnapshot?.documentChanges.forEach({ change in
+                    if change.type == .added {
+                        do {
+                            let no = try change.document.data(as: NotificationModel.self)
+                            self.notifications.append(no)
+                        } catch {
+                            self.handleError(String.notFoundData, error: nil)
+                            return
+                        }
+                    }
+                })
+//                documentsSnapshot?.documents.forEach({ snapshot in
+//                    let data = snapshot.data()
+//                    self.notifications.append(.init(data: data))
+//                })
+            }
+    }
+    
+    /// UIDに一致する店舗を取得
+    /// - Parameters:
+    ///   - uid: 店舗UID
+    /// - Returns: なし
+    func fetchStore(uid: String) {
+        FirebaseManager.shared.firestore
+            .collection(FirebaseConstants.stores)
+            .document(uid)
+            .getDocument { snapshot, error in
+                self.handleNetworkError(error: error, errorMessage: String.failureFetchStores)
+                
+                guard let data = snapshot?.data() else {
+                    self.handleError(String.notFoundData, error: nil)
+                    return
+                }
+                self.store = .init(data: data)
+            }
+    }
+    
+    // MARK: - イベント店舗ユーザーを取得
+    /// - Parameters: なし
+    /// - Returns: なし
+    func fetchAllEventStores() {
+        eventStores.removeAll()
+        
+        FirebaseManager.shared.firestore
+            .collection(FirebaseConstants.stores)
+            .getDocuments { documentsSnapshot, error in
+                if error != nil {
+                    self.handleNetworkError(error: error, errorMessage: String.failureFetchAllUser)
                     return
                 }
                 
                 documentsSnapshot?.documents.forEach({ snapshot in
                     let data = snapshot.data()
-                    self.notifications.append(.init(data: data))
+                    let store = Stores(data: data)
+                    
+                    // スキャン可能の場合のみ追加する。
+                    if store.isEnableScan && store.isEvent {
+                        self.eventStores.append(.init(data: data))
+                    }
                 })
+                self.eventStores.sort(by: {$0.no < $1.no})
             }
     }
     

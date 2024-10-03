@@ -17,7 +17,6 @@ struct RecentMessage: Equatable, Codable, Identifiable {
     let profileImageUrl: String
     let isSendPay: Bool
     let username: String
-    // TODO: - Timestamp型に変える
     let timestamp: Date
     
     var timeAgo: String {

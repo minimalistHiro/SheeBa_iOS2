@@ -10,7 +10,7 @@ import SwiftUI
 struct StoreDetailView: View {
     
     @ObservedObject var vm = ViewModel()
-    let store: ChatUser?
+    let store: Stores?
     
     var body: some View {
         NavigationStack {
@@ -31,7 +31,7 @@ struct StoreDetailView: View {
                 // 店舗名
                 HStack {
                     Spacer()
-                    Text(store?.username ?? "芝店舗")
+                    Text(store?.storename ?? "芝店舗")
                         .foregroundStyle(Color.black)
                         .font(.title3)
                         .bold()
@@ -104,7 +104,7 @@ struct StoreDetailView: View {
             .listStyle(.inset)
             .environment(\.defaultMinListRowHeight, 60)
         }
-        .navigationTitle(store?.username ?? "謎の店舗")
+        .navigationTitle(store?.storename ?? "謎の店舗")
         .asBackButton()
     }
 }

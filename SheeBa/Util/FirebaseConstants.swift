@@ -72,6 +72,7 @@ static let timestamp = "timestamp"
     // Stores
     static let stores = "stores"
     static let storename = "storename"
+    static let isEvent = "isEvent"
     
     // DBに保存しないデータ
     static let rankign = "rankign"

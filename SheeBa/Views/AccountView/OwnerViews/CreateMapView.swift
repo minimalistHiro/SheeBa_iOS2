@@ -25,8 +25,8 @@ struct CreateMapView: View {
                     Map()
                         .onTapGesture(perform: { screenLocation in
                             guard let location = reader.convert(screenLocation, from: .local) else { return }
-                            pointX = String(location.latitude)
-                            pointY = String(location.longitude)
+                            pointY = String(location.latitude)
+                            pointX = String(location.longitude)
                             print("tapped point: ", location)
                         })
                     

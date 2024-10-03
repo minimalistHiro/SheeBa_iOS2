@@ -21,6 +21,7 @@ struct Stores: Hashable, Identifiable {
     let profileImageUrl: String
     let getPoint: Int
     let isEnableScan: Bool
+    let isEvent: Bool
     let pointX: String
     let pointY: String
     
@@ -35,6 +36,7 @@ struct Stores: Hashable, Identifiable {
         self.profileImageUrl = data[FirebaseConstants.profileImageUrl] as? String ?? ""
         self.getPoint = data[FirebaseConstants.getPoint] as? Int ?? 0
         self.isEnableScan = data[FirebaseConstants.isEnableScan] as? Bool ?? false
+        self.isEvent = data[FirebaseConstants.isEvent] as? Bool ?? false
         self.pointX = data[FirebaseConstants.pointX] as? String ?? ""
         self.pointY = data[FirebaseConstants.pointY] as? String ?? ""
     }
@@ -51,6 +53,7 @@ let previewOfStores = Stores.init(data: [
     FirebaseConstants.profileImageUrl: "",
     FirebaseConstants.getPoint: 1,
     FirebaseConstants.isEnableScan: false,
+    FirebaseConstants.isEvent: false,
     FirebaseConstants.pointX: "",
     FirebaseConstants.pointY: "",
 ])

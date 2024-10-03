@@ -13,6 +13,10 @@ struct NotificationListView: View {
     @State private var isShowDialog = false                     // ダイアログの表示有無
     @State private var dialogNotificationTitle = ""             // ダイアログに表示するお知らせのタイトル
     
+    init() {
+        vm.fetchNotifications()
+    }
+    
     var body: some View {
         NavigationStack {
             List {
@@ -81,7 +85,7 @@ struct NotificationListView: View {
         .onAppear {
             if FirebaseManager.shared.auth.currentUser?.uid != nil {
                 vm.fetchCurrentUser()
-                vm.fetchNotifications()
+//                vm.fetchNotifications()
             }
         }
         .asSingleAlert(title: "",

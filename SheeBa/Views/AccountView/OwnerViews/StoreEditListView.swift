@@ -17,12 +17,12 @@ struct StoreEditListView: View {
     var body: some View {
         NavigationStack {
             List {
-                ForEach(stores) { store in
+                ForEach(stores, id: \.self) { store in
                     NavigationLink {
                         EditStoreInfoView(store: store)
                     } label: {
                         HStack {
-                            Text(store.storename)
+                            Text("\(store.no). \(store.storename)")
                                 .foregroundStyle(store.isEnableScan ? .blue : .gray)
                             
                             Spacer()
