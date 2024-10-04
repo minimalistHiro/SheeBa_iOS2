@@ -114,6 +114,7 @@
 		FD8AC78A2BBEA979007B688E /* MapPin.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD8AC7892BBEA979007B688E /* MapPin.swift */; };
 		FD9006152B9079C6006F68E0 /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD9006142B9079C6006F68E0 /* MapView.swift */; };
 		FDD4B41E2B834942002729A1 /* Advertisement.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDD4B41D2B834942002729A1 /* Advertisement.swift */; };
+		FDDBE5BC2CAF90A400625F94 /* FitnessView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDDBE5BB2CAF90A400625F94 /* FitnessView.swift */; };
 		FDDF445F2B786E0500156558 /* NotificationListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDDF445E2B786E0500156558 /* NotificationListView.swift */; };
 		FDDF44622B79FAC200156558 /* CreateNotificationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDDF44612B79FAC200156558 /* CreateNotificationView.swift */; };
 		FDDF44652B7B380300156558 /* NotificationModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDDF44642B7B380300156558 /* NotificationModel.swift */; };
@@ -202,6 +203,7 @@
 		FD8AC7892BBEA979007B688E /* MapPin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapPin.swift; sourceTree = "<group>"; };
 		FD9006142B9079C6006F68E0 /* MapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
 		FDD4B41D2B834942002729A1 /* Advertisement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Advertisement.swift; sourceTree = "<group>"; };
+		FDDBE5BB2CAF90A400625F94 /* FitnessView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FitnessView.swift; sourceTree = "<group>"; };
 		FDDF445E2B786E0500156558 /* NotificationListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationListView.swift; sourceTree = "<group>"; };
 		FDDF44612B79FAC200156558 /* CreateNotificationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateNotificationView.swift; sourceTree = "<group>"; };
 		FDDF44642B7B380300156558 /* NotificationModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationModel.swift; sourceTree = "<group>"; };
@@ -313,6 +315,7 @@
 				FD058BBD2B468C2000D4F467 /* HomeViews */,
 				FD9006132B9079AB006F68E0 /* MapViews */,
 				FD058BBE2B468C3500D4F467 /* CameraViews */,
+				FDDBE5BA2CAF908000625F94 /* FitnessViews */,
 				FD058BBF2B468C4200D4F467 /* AccountView */,
 				FD058BC02B468C5300D4F467 /* AppComponents */,
 				FD058BC12B468C6100D4F467 /* UIKit */,
@@ -522,6 +525,14 @@
 			path = MapViews;
 			sourceTree = "<group>";
 		};
+		FDDBE5BA2CAF908000625F94 /* FitnessViews */ = {
+			isa = PBXGroup;
+			children = (
+				FDDBE5BB2CAF90A400625F94 /* FitnessView.swift */,
+			);
+			path = FitnessViews;
+			sourceTree = "<group>";
+		};
 		FDDF44602B79F5B600156558 /* NotificationViews */ = {
 			isa = PBXGroup;
 			children = (
@@ -689,6 +700,7 @@
 				FD1255AC2B721B6C00724EFD /* RankingView.swift in Sources */,
 				FD1161EA2B46937D000B0064 /* SendPayView.swift in Sources */,
 				FD1161FA2B469451000B0064 /* Icon.swift in Sources */,
+				FDDBE5BC2CAF90A400625F94 /* FitnessView.swift in Sources */,
 				FD058C1B2B468EB200D4F467 /* FirebaseManager.swift in Sources */,
 				FD1161D82B468FC6000B0064 /* SetUpEmailView.swift in Sources */,
 				FD2FA5952B70CCFD00580C36 /* QRScannerViewController.swift in Sources */,

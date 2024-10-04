@@ -15,6 +15,7 @@ struct GetPointView: View {
     let getPoint: String
     @Binding var isSameStoreScanError: Bool
     @Binding var isQrCodeScanError: Bool
+    @Binding var isEventStoreScanError: Bool
     
     var body: some View {
         NavigationStack {
@@ -49,6 +50,11 @@ struct GetPointView: View {
                         .bold()
                         .dynamicTypeSize(.medium)
                         .padding()
+                } else if isEventStoreScanError {
+                    Text("このバッジは既に獲得済みです。")
+                        .bold()
+                        .dynamicTypeSize(.medium)
+                        .padding()
                 } else {
                     HStack {
                         Text(getPoint)
@@ -71,6 +77,7 @@ struct GetPointView: View {
                 Button {
                     isSameStoreScanError = false
                     isQrCodeScanError = false
+                    isEventStoreScanError = false
                     dismiss()
                 } label: {
                     CustomCapsule(text: "戻る", imageSystemName: nil, foregroundColor: .black, textColor: .white, isStroke: false)
@@ -85,5 +92,5 @@ struct GetPointView: View {
 }
 
 #Preview {
-    GetPointView(store: nil, getPoint: "1", isSameStoreScanError: .constant(false), isQrCodeScanError: .constant(false))
+    GetPointView(store: nil, getPoint: "1", isSameStoreScanError: .constant(false), isQrCodeScanError: .constant(false), isEventStoreScanError: .constant(false))
 }

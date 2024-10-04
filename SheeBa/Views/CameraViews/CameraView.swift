@@ -16,6 +16,7 @@ struct CameraView: View {
     @State private var isShowGetPointView = false       // GetPointViewの表示有無
     @State private var isSameStoreScanError = false     // 同日同店舗スキャンエラー
     @State private var isQrCodeScanError = false        // QRコード読み取りエラー
+    @State private var isEventStoreScanError = false    // イベント店舗読み取りエラー
     @State private var isShowSignOutAlert = false       // 強制サインアウトアラート
     
     @State private var resultUID = ""                 // 送金相手UID
@@ -69,7 +70,7 @@ struct CameraView: View {
 //                        }
                     }
                     .navigationDestination(isPresented: $isShowGetPointView) {
-                        GetPointView(store: vm.store, getPoint: getPoint, isSameStoreScanError: $isSameStoreScanError, isQrCodeScanError: $isQrCodeScanError)
+                        GetPointView(store: vm.store, getPoint: getPoint, isSameStoreScanError: $isSameStoreScanError, isQrCodeScanError: $isQrCodeScanError, isEventStoreScanError: $isEventStoreScanError)
                     }
             }
         }
@@ -344,11 +345,23 @@ struct CameraView: View {
             if let storePoint = vm.storePoint {
                 // 店舗QRコードが同日に2度以上のスキャンでない場合
                 if storePoint.date != vm.dateFormat(Date()) {
-                    handleGetPointFromStore(store: store)
-                    self.isShowGetPointView = true
+                    // イベント店舗の場合は、同日2度以上のスキャンでない場合でもエラー
+                    if store.isEvent {
+                        isEventStoreScanError = true
+                        self.isShowGetPointView = true
+                    } else {
+                        handleGetPointFromStore(store: store)
+                        self.isShowGetPointView = true
+                    }
                 } else {
-                    isSameStoreScanError = true
-                    self.isShowGetPointView = true
+                    // イベント店舗と通常店舗のエラー文を変える
+                    if store.isEvent {
+                        isEventStoreScanError = true
+                        self.isShowGetPointView = true
+                    } else {
+                        isSameStoreScanError = true
+                        self.isShowGetPointView = true
+                    }
                 }
             } else {
                 handleGetPointFromStore(store: store)

@@ -45,9 +45,9 @@ struct ContentView: View {
                     .tag(2)
                 CameraView(isUserCurrentryLoggedOut: $isUserCurrentryLoggedOut)
                     .tag(3)
-                MapView()
+                FitnessView()
                     .tabItem {
-                        Label("マップ", systemImage: "map")
+                        Label("", systemImage: "questionmark")
                     }
                     .tag(4)
                 AccountView(isUserCurrentryLoggedOut: $isUserCurrentryLoggedOut)

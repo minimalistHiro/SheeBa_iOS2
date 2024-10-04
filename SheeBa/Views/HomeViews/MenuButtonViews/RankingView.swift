@@ -171,7 +171,8 @@ struct RankingView: View {
                 
                 // 上位5位までのユーザーを取得する。
                 for user in sortUsers {
-                    if let money = Int(user.money), !user.isOwner {
+                    // オーナー、店舗オーナーはランキングから除く
+                    if let money = Int(user.money), !user.isOwner && !user.isStoreOwner {
                         // 表示順位以内であれば、ランキングに加える
                         if count < ranking  {
                             // ポイント数に変更があったら、順位を一つ変えるためカウント数を一つ加える。
