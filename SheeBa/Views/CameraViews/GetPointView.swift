@@ -40,6 +40,14 @@ struct GetPointView: View {
                 
                 Spacer()
                 
+                // Sheeba画像
+                if isQrCodeScanError {
+                    Image("Greeting")
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 180, height: 180)
+                }
+                
                 if isSameStoreScanError {
                     Text("1店舗につき1日1回のみポイントが貰えます。")
                         .bold()

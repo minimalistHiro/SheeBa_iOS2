@@ -28,7 +28,7 @@ final class Setting {
     // SendPayView
     static let minPasswordOfDigits = 8                          // パスワード最小桁数
     static let maxNumberOfDigits = 6                            // 最大送金桁数
-    static let maxChatTextCount = 70                            // メッセージテキスト最大文字数
+    static let maxChatTextCount = 300                            // メッセージテキスト最大文字数
 }
 
 final class UserSetting: ObservableObject {

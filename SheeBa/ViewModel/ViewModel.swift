@@ -230,7 +230,7 @@ final class ViewModel: ObservableObject {
             .collection(FirebaseConstants.messages)
             .document(fromId)
             .collection(toId)
-            .order(by: FirebaseConstants.timestamp)
+            .order(by: FirebaseConstants.timestamp, descending: true)
             .addSnapshotListener { querySnapshot, error in
                 if error != nil {
                     print("メッセージの取得に失敗しました。")
@@ -933,6 +933,7 @@ final class ViewModel: ObservableObject {
             FirebaseConstants.toId: toId,
             FirebaseConstants.profileImageUrl: user.profileImageUrl,
             FirebaseConstants.isSendPay: isSendPay,
+            FirebaseConstants.isRead: isSelf ? true : false,
             FirebaseConstants.username: user.username,
             FirebaseConstants.timestamp: Timestamp(),
         ] as [String : Any]

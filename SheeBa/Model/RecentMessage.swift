@@ -16,6 +16,7 @@ struct RecentMessage: Equatable, Codable, Identifiable {
     let text: String
     let profileImageUrl: String
     let isSendPay: Bool
+    let isRead: Bool
     let username: String
     let timestamp: Date
     

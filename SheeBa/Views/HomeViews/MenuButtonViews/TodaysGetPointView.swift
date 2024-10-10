@@ -215,8 +215,8 @@ struct TodaysGetPointView: View {
         var count: Int = 0
         
         for storePoint in storePoints {
-            // 全店舗ユーザーの中に今日取得した店舗ポイント情報を確保していた場合True。
-            if storePoint.date == vm.dateFormat(Date()) {
+            // 全店舗ユーザーの中に今日取得した店舗ポイント情報を確保していた場合、且つそのポイントがイベント限定でなかった場合True。
+            if storePoint.date == vm.dateFormat(Date()) && !storePoint.isEvent {
                 count += 1
             }
         }

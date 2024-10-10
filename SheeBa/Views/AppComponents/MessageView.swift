@@ -102,6 +102,7 @@ struct MessageView {
                 .padding()
                 .background(Color.sheebaDarkGreen)
                 .clipShape(RoundedRectangle(cornerRadius: Size.cornerRadius))
+                .frame(maxWidth: 250, alignment: .trailing)
             }
         }
     }
@@ -131,6 +132,7 @@ struct MessageView {
                 .padding()
                 .background(Color.sheebaYellow)
                 .clipShape(RoundedRectangle(cornerRadius: Size.cornerRadius))
+                .frame(maxWidth: 250, alignment: .leading)
                 Spacer()
             }
         }

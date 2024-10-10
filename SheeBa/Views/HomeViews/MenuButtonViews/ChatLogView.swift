@@ -19,6 +19,7 @@ struct ChatLogView: View {
     @State private var chatText = ""                    // ユーザーの入力テキスト
     @State private var lastText = ""                    // 一時保存用最新メッセージ
     @State private var isSendPay = false                // 送金処理をしたか否か
+//    @State private var textFieldRowCount: CGFloat = 1   // テキストフィールドの行数
     var chatUserUID: String
     
     init(chatUserUID: String) {
@@ -49,6 +50,9 @@ struct ChatLogView: View {
         .onAppear {
             if let uid = FirebaseManager.shared.auth.currentUser?.uid {
                 vm.fetchFriend(document1: chatUserUID, document2: uid)
+                vm.updateRecentMessage(document1: uid, document2: chatUserUID, data: [
+                    FirebaseConstants.isRead: true,
+                ])
             }
         }
         .asBackButton()
@@ -85,22 +89,24 @@ struct ChatLogView: View {
                                 }
                             }
                         }
+                        .rotationEffect(.degrees(180))
                         .padding(.horizontal)
                         .padding(.top, 5)
                     }
                     HStack { Spacer() }
                         .id(ChatLogView.emptyScrollTToString)
                 }
-                .onAppear {
-                    // 開くと同時に最下部を表示する
-                    scrollViewProxy.scrollTo(ChatLogView.emptyScrollTToString, anchor: .bottom)
-                }
-                .onChange(of: vm.isScroll) { _ in
-                    // メッセージが追加されるたびに最下部にスクロール
-                    withAnimation(.easeOut(duration: 0.5)) { scrollViewProxy.scrollTo(ChatLogView.emptyScrollTToString, anchor: .bottom) }
-                }
+//                .onAppear {
+//                    // 開くと同時に最下部を表示する
+//                    scrollViewProxy.scrollTo(ChatLogView.emptyScrollTToString, anchor: .bottom)
+//                }
+//                .onChange(of: vm.isScroll) { _ in
+//                    // メッセージが追加されるたびに最下部にスクロール
+//                    withAnimation(.easeOut(duration: 0.5)) { scrollViewProxy.scrollTo(ChatLogView.emptyScrollTToString, anchor: .top) }
+//                }
             }
         }
+        .rotationEffect(.degrees(180))
         .onTapGesture {
             focus = false
         }
@@ -108,7 +114,7 @@ struct ChatLogView: View {
     
     // MARK: - chatButtonBar
     private var chatButtonBar: some View {
-        HStack(spacing: 16) {
+        HStack(spacing: 10) {
             if !focus {
                 Button {
                     isShowSendPayScreen.toggle()
@@ -129,22 +135,37 @@ struct ChatLogView: View {
                 }
             }
             
-            Capsule()
-                .foregroundStyle(.white)
-                .frame(height: 35)
-                .overlay {
-                    TextField(focus ? "メッセージを入力" : "Aa", text: $chatText)
-                        .focused($focus)
-                        .padding(.horizontal)
-                        .onChange(of: chatText, perform: { value in
-                            // 最大文字数に達したら、それ以上書き込めないようにする
-                            if value.count > Setting.maxChatTextCount {
-                                chatText.removeLast(chatText.count - Setting.maxChatTextCount)
-                            }
-                        })
-                }
+//            Rectangle()
+//                .foregroundStyle(.white)
+//                .frame(height: 32 * textFieldRowCount)
+//                .clipShape(RoundedRectangle(cornerRadius: 10))
+//                .overlay {
+                    TextField(focus ? "メッセージを入力" : "Aa",
+                              text: $chatText,
+                              axis: .vertical
+                    )
+                    .padding(10)
+                    .background(Color.white)
+                    .focused($focus)
+                    .clipShape(RoundedRectangle(cornerRadius: 20))
+                    .padding(.horizontal)
+                    .onChange(of: chatText, perform: { value in
+//                        textFieldRowCount = 1
+                        // 最大文字数に達したら、それ以上書き込めないようにする
+                        if value.count > Setting.maxChatTextCount {
+                            chatText.removeLast(chatText.count - Setting.maxChatTextCount)
+                        }
+                        // 改行の数をカウントして、その分テキストフィールドを大きくする（5行まで）。
+//                        for val in value {
+//                            if val == "\n" && textFieldRowCount < 5 {
+//                                textFieldRowCount += 1
+//                            }
+//                        }
+                    })
+//                }
             
             Button {
+                focus = false
                 vm.handleSend(toId: chatUserUID, chatText: chatText, lastText: lastText, isSendPay: false)
                 // 送金処理以外（通常テキスト送信）の場合のみ実行
                 if !isSendPay {

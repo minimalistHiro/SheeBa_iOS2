@@ -201,11 +201,11 @@ struct RankingView: View {
     private func resetAllUserPoints() {
         vm.onIndicator = true
         
-        let data = [FirebaseConstants.money: "0",]
+        let data = [FirebaseConstants.money: "20",]
         
         for user in users {
             // 店舗アカウント、オーナーアカウント以外の全ユーザーの更新をする。
-            if !user.isStore && !user.isOwner {
+            if !user.isStore && !user.isOwner && !user.isStoreOwner {
                 vm.updateUser(document: user.uid, data: data)
             }
         }

@@ -15,6 +15,7 @@ struct StorePoint: Equatable, Codable, Identifiable {
     let profileImageUrl: String
     let getPoint: String
     let username: String
+    let isEvent: Bool
     let date: String
     
     init(data: [String: Any]) {
@@ -23,6 +24,7 @@ struct StorePoint: Equatable, Codable, Identifiable {
         self.profileImageUrl = data[FirebaseConstants.profileImageUrl] as? String ?? ""
         self.getPoint = data[FirebaseConstants.getPoint] as? String ?? ""
         self.username = data[FirebaseConstants.username] as? String ?? ""
+        self.isEvent = data[FirebaseConstants.isEvent] as? Bool ?? false
         self.date = data[FirebaseConstants.date] as? String ?? ""
     }
 }

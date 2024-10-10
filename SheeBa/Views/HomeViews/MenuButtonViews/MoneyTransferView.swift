@@ -227,6 +227,7 @@ struct MoneyTransferView: View {
                 }
                 VStack(alignment: .leading, spacing: 10) {
                     Text(recentMessage.username)
+                        .lineLimit(1)
                         .font(.title3)
                         .bold()
                         .foregroundStyle(Color.black)
@@ -238,12 +239,20 @@ struct MoneyTransferView: View {
                         }
                     } else {
                         Text(recentMessage.text)
+                            .lineLimit(2)
                             .font(.caption)
                             .foregroundStyle(Color.black)
                     }
                 }
                 
                 Spacer()
+                
+                if !recentMessage.isRead {
+                    Circle()
+                        .frame(width: 15, height: 15)
+                        .foregroundStyle(.red)
+//                        .padding(.trailing, 10)
+                }
                 
                 Text(recentMessage.timeAgo)
                     .font(.caption2)

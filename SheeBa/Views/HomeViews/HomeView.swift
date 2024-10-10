@@ -32,11 +32,20 @@ struct HomeView: View {
                 ScrollView {
                     LazyVStack {
                         titleView
+                        
                         if let _ = vm.alertNotification {
-                            notificationView
+                            alertView
                         }
+                        
+                        Image("SheeBa1")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 200)
+                            .padding(.horizontal)
+//                            .padding(.top, 10)
+                        
                         cardView
-                            .padding(.top, 10)
+//                            .padding(.top, 10)
                         menuButtons
                             .padding(.top, 10)
                         // TODO: - 第2弾
@@ -119,7 +128,7 @@ struct HomeView: View {
     }
     
     // MARK: - notificationView
-    private var notificationView: some View {
+    private var alertView: some View {
         Rectangle()
             .frame(height: 40)
             .foregroundStyle(Color.blue)
@@ -139,7 +148,16 @@ struct HomeView: View {
     // MARK: - titleView
     private var titleView: some View {
         HStack {
-            Image(String.clearTitle)
+//            Image(systemName: "")
+//                .resizable()
+//                .scaledToFit()
+//                .frame(width: 20)
+//                .foregroundStyle(.black)
+//                .padding()
+//            
+//            Spacer()
+            
+            Image("ClearTitle")
                 .resizable()
                 .scaledToFit()
                 .frame(width: 100)
@@ -175,7 +193,7 @@ struct HomeView: View {
     private var cardView: some View {
         Rectangle()
             .foregroundColor(Color.sheebaYellow)
-            .frame(width: 300, height: 200)
+            .frame(width: 270, height: 180)
             .cornerRadius(20)
             .shadow(radius: 7, x: 0, y: 0)
             .overlay {

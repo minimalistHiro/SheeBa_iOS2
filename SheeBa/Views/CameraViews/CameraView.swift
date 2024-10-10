@@ -379,8 +379,15 @@ struct CameraView: View {
     ///   - store: 取得店舗
     /// - Returns: なし
     private func handleGetPointFromStore(store: Stores) {
+        
+        let index: Int = Int.random(in: 1 ... 10)
+        
         // メェーの音を鳴らす
-        sounds.playSound()
+        if index == 1 {
+            sounds.playSoundSheep2()
+        } else {
+            sounds.playSoundSheep1()
+        }
         
         guard let currentUser = vm.currentUser else { return }
         getPoint = String(store.getPoint)
@@ -405,6 +412,7 @@ struct CameraView: View {
             FirebaseConstants.profileImageUrl: store.profileImageUrl,
             FirebaseConstants.getPoint: getPoint,
             FirebaseConstants.username: store.storename,
+            FirebaseConstants.isEvent: store.isEvent,
             FirebaseConstants.date: vm.dateFormat(Date()),
         ] as [String : Any]
         vm.persistStorePoint(document1: currentUser.uid, document2: store.uid, data: storePointData)
