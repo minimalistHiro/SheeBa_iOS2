@@ -38,8 +38,10 @@ struct RankingView: View {
                 }
                 .padding(.bottom, 20)
             }
+            .asCloseButton()
         }
         .navigationTitle("ランキング")
+        .navigationBarTitleDisplayMode(.inline)
         .overlay {
             ScaleEffectIndicator(onIndicator: $vm.onIndicator)
         }

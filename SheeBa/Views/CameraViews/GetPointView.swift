@@ -13,6 +13,8 @@ struct GetPointView: View {
 //    let chatUser: ChatUser?
     let store: Stores?
     let getPoint: String
+    @State var degree: Double = 100
+    @State private var isAnimating = false
     @Binding var isSameStoreScanError: Bool
     @Binding var isQrCodeScanError: Bool
     @Binding var isEventStoreScanError: Bool
@@ -27,6 +29,16 @@ struct GetPointView: View {
                     VStack {
                         if let image = store?.profileImageUrl, image != "" {
                             Icon.CustomWebImage(imageSize: .large, image: image)
+                                .rotation3DEffect(.init(degrees: degree),
+                                                  axis: (x: 0.0, y: 1.0, z: -0.2))
+                                .animation(.interpolatingSpring(
+                                    mass: 0.2, stiffness: 6, damping: 0.5, initialVelocity: 30), value: isAnimating)
+                                .onAppear {
+                                    self.degree = 0
+                                    if !isSameStoreScanError && !isQrCodeScanError && !isEventStoreScanError {
+                                        self.isAnimating = true
+                                    }
+                                }
                         } else {
                             Icon.CustomCircle(imageSize: .large)
                         }
@@ -64,20 +76,31 @@ struct GetPointView: View {
                         .dynamicTypeSize(.medium)
                         .padding()
                 } else {
-                    HStack {
-                        Text(getPoint)
-                            .font(.system(size: 70))
+                    if store?.isEvent == true {
+                        Text("ハロウィンスタンプ")
+                            .font(.system(size: 30))
                             .bold()
                             .dynamicTypeSize(.medium)
-                        Text("pt")
-                            .font(.title)
+                        Text("ゲット!")
+                            .font(.system(size: 30))
+                            .bold()
+                            .dynamicTypeSize(.medium)
+                    } else {
+                        HStack {
+                            Text(getPoint)
+                                .font(.system(size: 70))
+                                .bold()
+                                .dynamicTypeSize(.medium)
+                            Text("pt")
+                                .font(.title)
+                                .dynamicTypeSize(.medium)
+                        }
+                        
+                        Text("ゲット!")
+                            .font(.system(size: 30))
+                            .bold()
                             .dynamicTypeSize(.medium)
                     }
-                    
-                    Text("ゲット!")
-                        .font(.system(size: 30))
-                        .bold()
-                        .dynamicTypeSize(.medium)
                 }
                 
                 Spacer()
@@ -94,6 +117,7 @@ struct GetPointView: View {
                 Spacer()
                 Spacer()
             }
+            .background(store?.isEvent == true ? Color.orange : Color.white)
         }
         .navigationBarBackButtonHidden(true)
     }

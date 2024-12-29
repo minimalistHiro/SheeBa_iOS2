@@ -197,6 +197,7 @@ struct CreateStoresView: View {
                     .padding(.bottom)
                 }
             }
+            .asCloseButton()
         }
         .onAppear {
             uid = generator(30)

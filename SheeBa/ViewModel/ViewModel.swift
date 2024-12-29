@@ -36,6 +36,7 @@ final class ViewModel: ObservableObject {
     @Published var isShowAlert = false                          // アラート表示有無
     
     @Published var isScroll = false                             // メッセージスクロール用変数
+    @Published var isContainNotReadMessage = false              // 未読メッセージの有無の確認
     @Published var onIndicator = false                          // インジケーターが進行中か否か
     @Published var isNavigateConfirmEmailView = false           // メールアドレス認証画面の表示有無
     @Published var isNavigateNotConfirmEmailView = false        // メールアドレス未認証画面の表示有無
@@ -209,6 +210,10 @@ final class ViewModel: ObservableObject {
                     do {
                         let rm = try change.document.data(as: RecentMessage.self)
                         self.recentMessages.insert(rm, at: 0)
+                        // TODO: ~ 未読のカウント
+                        if rm.isRead {
+                            
+                        }
                     } catch {
                         self.handleError(String.notFoundData, error: nil)
                         return
@@ -1331,6 +1336,30 @@ final class ViewModel: ObservableObject {
                                                   from: scaledCiImage.extent) else { return nil }
         
         return UIImage(cgImage: cgImage)
+    }
+    
+    /// Date型を日付のみ取り出す
+    /// - Parameters:
+    ///   - title: 通知タイトル
+    ///   - body: 通知テキスト
+    ///   - identifier: 通知種類
+    /// - Returns: 日付のみのDate
+    func sendNotificationRequest(title: String, body: String, identifier: String){
+        // 通知オブジェクト作成
+        let content = UNMutableNotificationContent()
+        content.title = title
+        content.body = body
+        // 通知を発行するトリガー(条件)を設定
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 5, repeats: false)
+        let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
+        
+        // 現在のバッジ数を取得
+        let currentBadgeCount = UIApplication.shared.applicationIconBadgeNumber
+        // バッジ数を1増やす
+        UIApplication.shared.applicationIconBadgeNumber = currentBadgeCount + 1
+        
+        // 通知を登録
+        UNUserNotificationCenter.current().add(request)
     }
     
     

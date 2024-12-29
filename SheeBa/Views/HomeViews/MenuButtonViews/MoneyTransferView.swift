@@ -16,7 +16,7 @@ struct MoneyTransferView: View {
     @State private var shouldNavigateToChatLogView = false
     @State private var isShowApproveOrNotAlert = false      // 承認するか否かのアラート
     @State private var approveUserUID: String?
-    @State private var tab: Tab = .history
+    @State private var tab: Tab = .friend
     
     enum Tab {
         case history
@@ -31,8 +31,8 @@ struct MoneyTransferView: View {
     var body: some View {
         NavigationStack {
             HStack {
-                CustomTabBar(tab: $tab, buttonTab: .history)
                 CustomTabBar(tab: $tab, buttonTab: .friend)
+                CustomTabBar(tab: $tab, buttonTab: .history)
             }
             .foregroundStyle(.black)
             
@@ -189,9 +189,18 @@ struct MoneyTransferView: View {
             }
         }
         
+        var text: String {
+            switch buttonTab {
+            case .history:
+                "トーク"
+            case .friend:
+                "友達"
+            }
+        }
+        
         // 各種サイズ
         let frameWidthHeight: CGFloat = 30
-        let rectangleFrameHeight: CGFloat = 2
+        let rectangleFrameHeight: CGFloat = 3
         
         var body: some View {
             VStack {
@@ -203,10 +212,14 @@ struct MoneyTransferView: View {
                         Image(systemName: imageSystemName)
                             .resizable()
                             .scaledToFit()
+                            .foregroundStyle(tab == buttonTab ? Color.black : Color.gray)
                             .frame(width: frameWidthHeight, height: frameWidthHeight)
                         Spacer()
                     }
                 }
+                Text(text)
+                    .font(.caption)
+                    .foregroundStyle(tab == buttonTab ? Color.black : Color.gray)
                 Rectangle()
                     .foregroundColor(tab == buttonTab ? .black : .white)
                     .frame(height: rectangleFrameHeight)

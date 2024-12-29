@@ -45,8 +45,10 @@ struct TodaysGetPointView: View {
                 }
                 .padding(.bottom, 20)
             }
+            .asCloseButton()
         }
         .navigationTitle("本日の獲得ポイント一覧")
+        .navigationBarTitleDisplayMode(.inline)
         .onAppear {
             if FirebaseManager.shared.auth.currentUser?.uid != nil {
                 vm.fetchCurrentUser()

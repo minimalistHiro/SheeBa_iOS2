@@ -73,6 +73,7 @@ struct NotificationListView: View {
                 Spacer()
                     .listRowSeparator(.hidden)
             }
+            .asCloseButton()
             .listStyle(.inset)
             .environment(\.defaultMinListRowHeight, 60)
             .navigationTitle("お知らせ")

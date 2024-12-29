@@ -35,83 +35,84 @@ struct CreateNotificationView: View {
     
     var body: some View {
         NavigationStack {
-//            ScrollView {
-                VStack {
-                    Spacer()
-                    
-                    InputText.InputTextField(focus: $focus, editText: $title, titleText: "タイトル", textType: .other)
-                    
-                    InputText.InputTextField(focus: $focus, editText: $url, titleText: "URL", textType: .url)
-                    
-                    Spacer()
-                    
-                    TextEditor(text: $text)
-                        .frame(width: 300, height: 150)
-                        .border(.black)
-                        .focused($focus.projectedValue)
-                    
-                    Spacer()
-                    
-                    // 画像
-                    Button {
-                        isShowImagePicker.toggle()
-                    } label: {
-                        if let image = image {
-                            Image(uiImage: image)
-                                .resizable()
-                                .scaledToFill()
-                                .frame(width: imageFrameWidth, height: imageFrameHeight)
-                                .clipShape(RoundedRectangle(cornerSize: CGSize(width: imageCornerSize, height: imageCornerSize)))
-                                .overlay {
-                                    RoundedRectangle(cornerSize: CGSize(width: imageCornerSize, height: imageCornerSize))
-                                        .stroke(.black, lineWidth: imageStroke)
-                                        .frame(width: imageFrameWidth, height: imageFrameHeight)
-                                }
-//                                .padding()
-                        } else {
-                            RoundedRectangle(cornerSize: CGSize(width: imageCornerSize, height: imageCornerSize))
-                                .stroke(.black , lineWidth: imageStroke)
-                                .frame(width: imageFrameWidth, height: imageFrameHeight)
-                                .overlay {
-                                    RoundedRectangle(cornerSize: CGSize(width: imageCornerSize, height: imageCornerSize))
-                                        .frame(width: imageFrameWidth - 3, height: imageFrameHeight - 3)
-                                        .foregroundStyle(Color.chatLogBackground)
-                                }
-                                .overlay {
-                                    Text("画像を選択してください")
-                                }
-//                                .padding()
-                        }
+            //            ScrollView {
+            VStack {
+                Spacer()
+                
+                InputText.InputTextField(focus: $focus, editText: $title, titleText: "タイトル", textType: .other)
+                
+                InputText.InputTextField(focus: $focus, editText: $url, titleText: "URL", textType: .url)
+                
+                Spacer()
+                
+                TextEditor(text: $text)
+                    .frame(width: 300, height: 150)
+                    .border(.black)
+                    .focused($focus.projectedValue)
+                
+                Spacer()
+                
+                // 画像
+                Button {
+                    isShowImagePicker.toggle()
+                } label: {
+                    if let image = image {
+                        Image(uiImage: image)
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: imageFrameWidth, height: imageFrameHeight)
+                            .clipShape(RoundedRectangle(cornerSize: CGSize(width: imageCornerSize, height: imageCornerSize)))
+                            .overlay {
+                                RoundedRectangle(cornerSize: CGSize(width: imageCornerSize, height: imageCornerSize))
+                                    .stroke(.black, lineWidth: imageStroke)
+                                    .frame(width: imageFrameWidth, height: imageFrameHeight)
+                            }
+                        //                                .padding()
+                    } else {
+                        RoundedRectangle(cornerSize: CGSize(width: imageCornerSize, height: imageCornerSize))
+                            .stroke(.black , lineWidth: imageStroke)
+                            .frame(width: imageFrameWidth, height: imageFrameHeight)
+                            .overlay {
+                                RoundedRectangle(cornerSize: CGSize(width: imageCornerSize, height: imageCornerSize))
+                                    .frame(width: imageFrameWidth - 3, height: imageFrameHeight - 3)
+                                    .foregroundStyle(Color.chatLogBackground)
+                            }
+                            .overlay {
+                                Text("画像を選択してください")
+                            }
+                        //                                .padding()
                     }
-                    
-                    Spacer()
-                    
-                    Button {
-                        if image == nil {
-                            persistNotifications(imageUrl: nil)
+                }
+                
+                Spacer()
+                
+                Button {
+                    if image == nil {
+                        persistNotifications(imageUrl: nil)
+                    } else {
+                        persistImage(image: image)
+                    }
+                    UNUserNotificationCenter.current().requestAuthorization(options: [.alert,.sound,.badge]){
+                        (granted, error) in
+                        if granted {
+                            //通知が許可されている場合の処理
+                            //                                makeNotification(title: title, body: text)
                         } else {
-                            persistImage(image: image)
-                        }
-                        UNUserNotificationCenter.current().requestAuthorization(options: [.alert,.sound,.badge]){
-                            (granted, error) in
-                            if granted {
-                                //通知が許可されている場合の処理
-//                                makeNotification(title: title, body: text)
-                            } else {
-                                //通知が拒否されている場合、1秒後に表示を戻す
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                                    print("通知を送れませんでした。")
-                                }
+                            //通知が拒否されている場合、1秒後に表示を戻す
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                                print("通知を送れませんでした。")
                             }
                         }
-                    } label: {
-                        CustomCapsule(text: "送信", imageSystemName: nil, foregroundColor: disabled ? .gray : .black, textColor: .white, isStroke: false)
                     }
-                    .disabled(disabled)
-                    
-                    Spacer()
+                } label: {
+                    CustomCapsule(text: "送信", imageSystemName: nil, foregroundColor: disabled ? .gray : .black, textColor: .white, isStroke: false)
                 }
-//            }
+                .disabled(disabled)
+                
+                Spacer()
+            }
+            .asCloseButton()
+            //            }
             // タップでキーボードを閉じるようにするため
             .contentShape(Rectangle())
             .onTapGesture {
@@ -169,6 +170,8 @@ struct CreateNotificationView: View {
         for user in vm.allUsersContainSelf {
             vm.persistNotification(document1: user.uid, document2: title, data: data)
         }
+        // 通知を送信
+        vm.sendNotificationRequest(title: title, body: text, identifier: title)
         
         vm.onIndicator = false
         self.isShowCreateNotification = true

@@ -115,6 +115,7 @@
 		FD9006152B9079C6006F68E0 /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD9006142B9079C6006F68E0 /* MapView.swift */; };
 		FDD4B41E2B834942002729A1 /* Advertisement.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDD4B41D2B834942002729A1 /* Advertisement.swift */; };
 		FDDBE5BC2CAF90A400625F94 /* FitnessView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDDBE5BB2CAF90A400625F94 /* FitnessView.swift */; };
+		FDDBE5BE2CC8D9EB00625F94 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDDBE5BD2CC8D9EB00625F94 /* AppDelegate.swift */; };
 		FDDF445F2B786E0500156558 /* NotificationListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDDF445E2B786E0500156558 /* NotificationListView.swift */; };
 		FDDF44622B79FAC200156558 /* CreateNotificationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDDF44612B79FAC200156558 /* CreateNotificationView.swift */; };
 		FDDF44652B7B380300156558 /* NotificationModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDDF44642B7B380300156558 /* NotificationModel.swift */; };
@@ -204,6 +205,7 @@
 		FD9006142B9079C6006F68E0 /* MapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
 		FDD4B41D2B834942002729A1 /* Advertisement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Advertisement.swift; sourceTree = "<group>"; };
 		FDDBE5BB2CAF90A400625F94 /* FitnessView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FitnessView.swift; sourceTree = "<group>"; };
+		FDDBE5BD2CC8D9EB00625F94 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		FDDF445E2B786E0500156558 /* NotificationListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationListView.swift; sourceTree = "<group>"; };
 		FDDF44612B79FAC200156558 /* CreateNotificationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateNotificationView.swift; sourceTree = "<group>"; };
 		FDDF44642B7B380300156558 /* NotificationModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationModel.swift; sourceTree = "<group>"; };
@@ -295,6 +297,7 @@
 		FD058BB42B468B5B00D4F467 /* Util */ = {
 			isa = PBXGroup;
 			children = (
+				FDDBE5BD2CC8D9EB00625F94 /* AppDelegate.swift */,
 				FD058C002B468D5E00D4F467 /* Setting.swift */,
 				FD058C1A2B468EB200D4F467 /* FirebaseManager.swift */,
 				FD058C1C2B468EC400D4F467 /* FirebaseConstants.swift */,
@@ -670,6 +673,7 @@
 				FD058C012B468D5E00D4F467 /* Setting.swift in Sources */,
 				FD1161D62B468FB6000B0064 /* SetUpUsernameView.swift in Sources */,
 				FDDF44672B7C7BE200156558 /* NotificationDetailView.swift in Sources */,
+				FDDBE5BE2CC8D9EB00625F94 /* AppDelegate.swift in Sources */,
 				FD1161EE2B4693A6000B0064 /* GetPointView.swift in Sources */,
 				FD1162022B46949D000B0064 /* ImagePicker.swift in Sources */,
 				FD058C0F2B468DEF00D4F467 /* ViewExtension.swift in Sources */,
@@ -859,9 +863,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = SheeBa/SheeBa.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 13;
+				CURRENT_PROJECT_VERSION = 18;
 				DEVELOPMENT_ASSET_PATHS = "\"SheeBa/Preview Content\"";
 				DEVELOPMENT_TEAM = T9U9A227FB;
 				ENABLE_PREVIEWS = YES;
@@ -881,7 +886,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.0.2;
+				MARKETING_VERSION = 2.0.7;
 				PRODUCT_BUNDLE_IDENTIFIER = com.hiroki.SheeBa;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -898,9 +903,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = SheeBa/SheeBa.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 13;
+				CURRENT_PROJECT_VERSION = 18;
 				DEVELOPMENT_ASSET_PATHS = "\"SheeBa/Preview Content\"";
 				DEVELOPMENT_TEAM = T9U9A227FB;
 				ENABLE_PREVIEWS = YES;
@@ -920,7 +926,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.0.2;
+				MARKETING_VERSION = 2.0.7;
 				PRODUCT_BUNDLE_IDENTIFIER = com.hiroki.SheeBa;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";

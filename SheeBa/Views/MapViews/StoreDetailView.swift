@@ -105,6 +105,7 @@ struct StoreDetailView: View {
             .environment(\.defaultMinListRowHeight, 60)
         }
         .navigationTitle(store?.storename ?? "謎の店舗")
+        .navigationBarTitleDisplayMode(.inline)
         .asBackButton()
     }
 }

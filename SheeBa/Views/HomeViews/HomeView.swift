@@ -16,6 +16,9 @@ struct HomeView: View {
     @State private var isShowQRCodeView = false             // QRCodeView表示有無
     @State private var isShowSignOutAlert = false           // 強制サインアウトアラート
     @State private var isContainNotReadNotification = false // 未読のお知らせの有無
+    @State private var isShowNotificationListView = false   // NotificationListView表示有無
+    @State private var isShowRankingView = false            // RankingView表示有無
+    @State private var isShowTodaysGetPointView = false     // TodaysGetPointView表示有無
     
     @Binding var isUserCurrentryLoggedOut: Bool
     
@@ -50,8 +53,8 @@ struct HomeView: View {
                             .padding(.top, 10)
                         // TODO: - 第2弾
 //                        advertisements
-                        badgeView
-                            .padding(.top, 10)
+//                        badgeView
+//                            .padding(.top, 10)
                     }
                 }
                 //                .overlay {
@@ -125,6 +128,16 @@ struct HomeView: View {
                 vm.isNavigateNotConfirmEmailView = false
             }
         }
+        // iOS18バグ打開策
+        .sheet(isPresented: $isShowNotificationListView) {
+            NotificationListView()
+        }
+        .sheet(isPresented: $isShowRankingView) {
+            RankingView(currentUser: vm.currentUser ?? nil)
+        }
+        .sheet(isPresented: $isShowTodaysGetPointView) {
+            TodaysGetPointView()
+        }
     }
     
     // MARK: - notificationView
@@ -166,8 +179,8 @@ struct HomeView: View {
             
             Spacer()
             
-            NavigationLink {
-                NotificationListView()
+            Button {
+                isShowNotificationListView = true
             } label: {
                 ZStack(alignment: .topTrailing) {
                     Image(systemName: "bell")
@@ -186,6 +199,27 @@ struct HomeView: View {
                     }
                 }
             }
+
+//            NavigationLink {
+//                NotificationListView()
+//            } label: {
+//                ZStack(alignment: .topTrailing) {
+//                    Image(systemName: "bell")
+//                        .resizable()
+//                        .scaledToFit()
+//                        .frame(width: 20)
+//                        .foregroundStyle(.black)
+//                    .padding()
+//                    
+//                    if isContainNotReadNotification {
+//                        Circle()
+//                            .frame(width: 12, height: 12)
+//                            .foregroundStyle(.red)
+//                            .padding(.trailing, 10)
+//                            .padding(.top, 10)
+//                    }
+//                }
+//            }
         }
     }
     
@@ -199,7 +233,11 @@ struct HomeView: View {
             .overlay {
                 VStack {
                     Spacer()
-                    Text("獲得ポイント")
+                    Button {
+                        vm.sendNotificationRequest(title: "タイトル", body: "body", identifier: "タイトル")
+                    } label: {
+                        Text("獲得ポイント")
+                    }
                     Spacer()
                     HStack {
                         Spacer()
@@ -269,7 +307,6 @@ struct HomeView: View {
                     .foregroundColor(.white)
 //                }
                 
-                // TODO: - 第二弾
                 // 送るボタン
                 NavigationLink {
                     MoneyTransferView()
@@ -279,20 +316,34 @@ struct HomeView: View {
                 .foregroundColor(.white)
                 
                 // ランキングボタン
-                NavigationLink {
-                    RankingView(currentUser: vm.currentUser ?? nil)
+                Button {
+                    isShowRankingView = true
                 } label: {
                     MenuButton(imageSystemName: "trophy", text: "ランキング")
                 }
                 .foregroundColor(.white)
+
+//                NavigationLink {
+//                    RankingView(currentUser: vm.currentUser ?? nil)
+//                } label: {
+//                    MenuButton(imageSystemName: "trophy", text: "ランキング")
+//                }
+//                .foregroundColor(.white)
                 
                 // 本日の獲得ボタン
-                NavigationLink {
-                    TodaysGetPointView()
+                Button {
+                    isShowTodaysGetPointView = true
                 } label: {
                     MenuButton(imageSystemName: "storefront", text: "本日の獲得")
                 }
                 .foregroundColor(.white)
+                
+//                NavigationLink {
+//                    TodaysGetPointView()
+//                } label: {
+//                    MenuButton(imageSystemName: "storefront", text: "本日の獲得")
+//                }
+//                .foregroundColor(.white)
             }
         }
     }
@@ -345,14 +396,18 @@ struct HomeView: View {
     // MARK: - badgeView
     private var badgeView: some View {
         Rectangle()
-            .foregroundColor(Color.white)
+            .foregroundColor(Color.orange)
+//            .opacity(0.3)
             .frame(width: 300, height: 400)
             .cornerRadius(20)
             .shadow(radius: 7, x: 0, y: 0)
             .overlay {
                 VStack {
-                    Text("獲得したバッジ")
-                        .padding(.vertical, 10)
+                    Text("ハロウィンスタンプ")
+                        .bold()
+                        .padding(.top, 10)
+                    Text("獲得可能期間10月25日〜10月31日")
+                        .font(.caption)
                     LazyVGrid(columns: Array(repeating: GridItem(), count: 4)) {
                         ForEach(vm.eventStores) { store in
                             if store.profileImageUrl != "" {

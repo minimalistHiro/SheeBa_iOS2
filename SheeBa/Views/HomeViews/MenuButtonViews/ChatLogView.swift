@@ -50,9 +50,13 @@ struct ChatLogView: View {
         .onAppear {
             if let uid = FirebaseManager.shared.auth.currentUser?.uid {
                 vm.fetchFriend(document1: chatUserUID, document2: uid)
-                vm.updateRecentMessage(document1: uid, document2: chatUserUID, data: [
-                    FirebaseConstants.isRead: true,
-                ])
+                
+                // メッセージがある場合のみ取得
+                if !vm.chatMessages.isEmpty {
+                    vm.updateRecentMessage(document1: uid, document2: chatUserUID, data: [
+                        FirebaseConstants.isRead: true,
+                    ])
+                }
             }
         }
         .asBackButton()
