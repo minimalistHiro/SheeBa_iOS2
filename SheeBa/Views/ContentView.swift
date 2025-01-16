@@ -17,17 +17,18 @@ struct ContentView: View {
     @State private var isUserCurrentryLoggedOut = false     // ユーザーのログインの有無
     
     init() {
+        
         isUserCurrentryLoggedOut = FirebaseManager.shared.auth.currentUser?.uid == nil
 //        if FirebaseManager.shared.auth.currentUser?.uid != nil {
 //            vm.fetchCurrentUser()
 //            vm.fetchRecentMessages()
 //        }
+        
         // バッジ
-//        UNUserNotificationCenter.current().requestAuthorization(options: .badge) { (granted, err) in
-//        }
-//        
+        UNUserNotificationCenter.current().requestAuthorization(options: .badge) { (granted, err) in }
+        
 //        let application = UIApplication.shared
-//        UIApplication.shared.applicationIconBadgeNumber = 0
+        UIApplication.shared.applicationIconBadgeNumber = 0
     }
     
     var body: some View {

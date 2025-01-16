@@ -38,10 +38,10 @@ struct MessageView {
                     }
                     Spacer()
                 }
-                .foregroundColor(.white)
+                .foregroundColor(.black)
                 .padding(.horizontal, Size.sendPayPaddingHorizontal)
                 .padding(.vertical, Size.sendPayPaddingVertical)
-                .background(Color.sheebaDarkGreen)
+                .background(Color.sheebaGreen)
                 .clipShape(RoundedRectangle(cornerRadius: Size.cornerRadius))
             }
         }
@@ -79,10 +79,10 @@ struct MessageView {
                     }
                     Spacer()
                 }
-                .foregroundColor(.black)
+                .foregroundColor(.white)
                 .padding(.horizontal, Size.sendPayPaddingHorizontal)
                 .padding(.vertical, Size.sendPayPaddingVertical)
-                .background(Color.sheebaYellow)
+                .background(Color.sheebaDarkGreen)
                 .clipShape(RoundedRectangle(cornerRadius: Size.cornerRadius))
                 Spacer()
             }
@@ -97,10 +97,10 @@ struct MessageView {
                 Spacer()
                 HStack {
                     Text(message.text)
-                        .foregroundColor(.white)
+                        .foregroundColor(.black)
                 }
                 .padding()
-                .background(Color.sheebaDarkGreen)
+                .background(Color.sheebaGreen)
                 .clipShape(RoundedRectangle(cornerRadius: Size.cornerRadius))
                 .frame(maxWidth: 250, alignment: .trailing)
             }
@@ -127,10 +127,10 @@ struct MessageView {
                 }
                 HStack {
                     Text(message.text)
-                        .foregroundColor(.black)
+                        .foregroundColor(.white)
                 }
                 .padding()
-                .background(Color.sheebaYellow)
+                .background(Color.sheebaDarkGreen)
                 .clipShape(RoundedRectangle(cornerRadius: Size.cornerRadius))
                 .frame(maxWidth: 250, alignment: .leading)
                 Spacer()

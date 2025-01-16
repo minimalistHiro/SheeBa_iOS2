@@ -39,6 +39,11 @@ struct StoreDetailView: View {
                 }
                 .listRowSeparator(.hidden)
                 
+                // 紹介テキスト
+//                Text("松本優樹 個展「器と陶板」¥n12月6日〜1月13日 年始2日から営業。4日（土）18時まで。 喫茶・本・ギャラリー（本は販売しています） 水・木定休 10:30～18:00（土曜は21:00まで） 駐車場は店の近くに2台あります。")
+//                    .padding(.horizontal)
+//                    .frame(width: 250, alignment: .leading)
+                
                 // 電話番号
                 HStack {
                     Text("ジャンル")

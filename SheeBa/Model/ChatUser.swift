@@ -11,6 +11,7 @@ struct ChatUser: Hashable, Identifiable {
     var id: String { uid }
     
     let uid: String
+    let fcmToken: String
     let email: String
     let profileImageUrl: String
     let money: String
@@ -40,6 +41,7 @@ struct ChatUser: Hashable, Identifiable {
     
     init(data: [String: Any]) {
         self.uid = data[FirebaseConstants.uid] as? String ?? ""
+        self.fcmToken = data[FirebaseConstants.fcmToken] as? String ?? ""
         self.email = data[FirebaseConstants.email] as? String ?? ""
         self.profileImageUrl = data[FirebaseConstants.profileImageUrl] as? String ?? ""
         self.money = data[FirebaseConstants.money] as? String ?? ""
@@ -66,8 +68,9 @@ struct ChatUser: Hashable, Identifiable {
 }
 
 let previewOfChatUser = ChatUser.init(data: [
-    FirebaseConstants.email: "test@gmail.com",
     FirebaseConstants.uid: "",
+    FirebaseConstants.fcmToken: "",
+    FirebaseConstants.email: "test@gmail.com",
     FirebaseConstants.isStore: true,
     FirebaseConstants.getPoint: 1,
     FirebaseConstants.isEnableScan: true,

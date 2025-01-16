@@ -17,6 +17,7 @@ struct HomeView: View {
     @State private var isShowSignOutAlert = false           // 強制サインアウトアラート
     @State private var isContainNotReadNotification = false // 未読のお知らせの有無
     @State private var isShowNotificationListView = false   // NotificationListView表示有無
+    @State private var isShowMoneyTransferView = false      // MoneyTransferView表示有無
     @State private var isShowRankingView = false            // RankingView表示有無
     @State private var isShowTodaysGetPointView = false     // TodaysGetPointView表示有無
     
@@ -75,6 +76,14 @@ struct HomeView: View {
                     fetchStorePoints()
                     fetchNotificationsAndSearchNotRead()
                     vm.fetchAdvertisements()
+                    
+//                    guard let uid = FirebaseManager.shared.auth.currentUser?.uid else { return }
+                    
+//                    // fcmTokenがNULL若しくは空の場合、DBにfcmTokenを保存する。
+//                    if vm.currentUser?.fcmToken == nil || vm.currentUser?.fcmToken.isEmpty ?? true {
+//                        let data = [FirebaseConstants.fcmToken: vm.fcmToken,]
+//                        vm.updateUser(document: uid, data: data)
+//                    }
                 }
             } else {
                 isUserCurrentryLoggedOut = true
@@ -132,15 +141,21 @@ struct HomeView: View {
         .sheet(isPresented: $isShowNotificationListView) {
             NotificationListView()
         }
+        .sheet(isPresented: $isShowMoneyTransferView) {
+            MoneyTransferView()
+        }
         .sheet(isPresented: $isShowRankingView) {
             RankingView(currentUser: vm.currentUser ?? nil)
         }
         .sheet(isPresented: $isShowTodaysGetPointView) {
             TodaysGetPointView()
         }
+        .sheet(isPresented: $isShowTodaysGetPointView) {
+            TodaysGetPointView()
+        }
     }
     
-    // MARK: - notificationView
+    // MARK: - alertView
     private var alertView: some View {
         Rectangle()
             .frame(height: 40)
@@ -308,12 +323,18 @@ struct HomeView: View {
 //                }
                 
                 // 送るボタン
-                NavigationLink {
-                    MoneyTransferView()
+                Button {
+                    isShowMoneyTransferView = true
                 } label: {
-                    MenuButton(imageSystemName: "yensign.circle", text: "送る")
+                    MenuButton(imageSystemName: "yensign.circle", text: "送る　")
                 }
                 .foregroundColor(.white)
+//                NavigationLink {
+//                    MoneyTransferView()
+//                } label: {
+//                    MenuButton(imageSystemName: "yensign.circle", text: "送る")
+//                }
+//                .foregroundColor(.white)
                 
                 // ランキングボタン
                 Button {

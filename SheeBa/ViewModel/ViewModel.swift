@@ -16,6 +16,7 @@ final class ViewModel: ObservableObject {
     
     @Published var currentUser: ChatUser?                       // 現在のユーザー
     @Published var chatUser: ChatUser?                          // トーク相手ユーザー
+    @Published var fcmToken = ""                                // fcmToken（通知用デバイストークン）
     @Published var allUsersOtherThanSelf = [ChatUser]()         // 全ユーザー(自分以外)
     @Published var allUsersContainSelf = [ChatUser]()           // 全ユーザー(自分含める)
     @Published var recentMessages = [RecentMessage]()           // 全最新メッセージ
@@ -1338,17 +1339,19 @@ final class ViewModel: ObservableObject {
         return UIImage(cgImage: cgImage)
     }
     
-    /// Date型を日付のみ取り出す
+    /// 通知を送信
     /// - Parameters:
     ///   - title: 通知タイトル
     ///   - body: 通知テキスト
     ///   - identifier: 通知種類
-    /// - Returns: 日付のみのDate
-    func sendNotificationRequest(title: String, body: String, identifier: String){
+    /// - Returns: なし
+    func sendNotificationRequest(title: String, body: String, identifier: String) {
+        
         // 通知オブジェクト作成
         let content = UNMutableNotificationContent()
         content.title = title
         content.body = body
+        content.sound = .default
         // 通知を発行するトリガー(条件)を設定
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 5, repeats: false)
         let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
@@ -1359,7 +1362,47 @@ final class ViewModel: ObservableObject {
         UIApplication.shared.applicationIconBadgeNumber = currentBadgeCount + 1
         
         // 通知を登録
-        UNUserNotificationCenter.current().add(request)
+        UNUserNotificationCenter.current().add(request, withCompletionHandler: nil)
+    }
+    
+    /// Push通知送信処理
+    /// - Parameters:
+    ///   - token: 送信先のFCMToken
+    ///   - uid: 自身のUID
+    ///   - title: 通知タイトル
+    ///   - body: 通知本文
+    /// - Returns: なし
+    func sendPushNotification(to token: String, uid: String, title: String, body: String, completion: @escaping () -> Void) {
+        let fcmServerKey = "AIzaSyBAFkV7v2M6l06Ibzxc5b68JEYVkN780-0"            // fcmサーバーキー
+        let endpoint = "https://fcm.googleapis.com/fcm/send"                    // エンドポイント
+        
+        guard let url = URL(string: endpoint) else { return }
+        
+        // TODO: - fcmサーバーキーが本当に正しいか確認。その後、実行して確認。
+        
+        let paramString: [String: Any] = ["to": token,
+                                          "notification": ["title": title, "body": body],
+                                          "data": ["userId": uid]]
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.httpBody = try? JSONSerialization.data(withJSONObject: paramString, options: [.prettyPrinted])
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("key=\(fcmServerKey)", forHTTPHeaderField: "Authorization")
+        
+        let task = URLSession.shared.dataTask(with: request) { data, _, _ in
+            do {
+                if let jsonData = data {
+                    if let jsonDataDict = try JSONSerialization.jsonObject(with: jsonData, options: JSONSerialization.ReadingOptions.allowFragments) as? [String: AnyObject] {
+                        print("Received data: \(jsonDataDict)")
+                    }
+                }
+            } catch let err as NSError {
+                print(err.debugDescription)
+            }
+        }
+        
+        task.resume()
+        completion()
     }
     
     

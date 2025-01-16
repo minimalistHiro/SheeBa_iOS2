@@ -47,6 +47,7 @@ struct MoneyTransferView: View {
             .overlay {
                 searchNewMemverButton
             }
+            .asCloseButton()
         }
         .asBackButton()
         .onAppear {

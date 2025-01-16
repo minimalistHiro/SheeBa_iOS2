@@ -129,7 +129,7 @@ struct MapView: View {
                                 } label: {
                                     CustomCapsule(text: "詳細を見る",
                                                   imageSystemName: nil,
-                                                  foregroundColor: Color.black,
+                                                  foregroundColor: Color.blue,
                                                   textColor: Color.white,
                                                   isStroke: false)
                                 }

@@ -87,6 +87,7 @@ extension String {
     
     // Preview
     static let previewUsername = "test"
+    static let previewFcmToken = ""
     static let previewAge = ages.first ?? ""
     static let previewAddress = addresses.first ?? ""
     static let previewEmail = "test@gmail.com"
