@@ -5,12 +5,18 @@
 //  Created by 金子広樹 on 2023/12/02.
 //
 
+import Foundation
 import SwiftUI
 import FirebaseFirestore
 import FirebaseCore
 import FirebaseAuth
 import FirebaseStorage
 import FirebaseAnalytics
+import FirebaseMessaging
+import JWTKit
+import SwiftJWT
+//import GoogleAPIRuntime
+//import GTMSessionFetcherCore
 
 final class ViewModel: ObservableObject {
     
@@ -30,6 +36,7 @@ final class ViewModel: ObservableObject {
     @Published var alertNotification: AlertNotification?        // 速報
     @Published var notifications = [NotificationModel]()        // 全お知らせ
     @Published var advertisements = [Advertisement]()           // 全広告
+    @Published var accessToken = ""                             // アクセストークン
     
     @Published var errorMessage = ""                            // エラーメッセージ
     @Published var isShowError = false                          // エラー表示有無
@@ -44,9 +51,8 @@ final class ViewModel: ObservableObject {
     @Published var isShowNotConfirmEmailError = false           // メールアドレス未認証エラー
     let didCompleteLoginProcess: () -> ()
     
-    init(){
+    init() {
         self.didCompleteLoginProcess = {}
-        
     }
     
     init(didCompleteLoginProcess: @escaping () -> ()) {
@@ -533,7 +539,7 @@ final class ViewModel: ObservableObject {
         //        }
         
         FirebaseManager.shared.auth.createUser(withEmail: email, password: password) { result, error in
-            if let error = error as NSError?, let errorCode = AuthErrorCode.Code(rawValue: error.code) {
+            if let error = error as NSError?, let errorCode = AuthErrorCode(rawValue: error.code) {
                 switch errorCode {
                 case .invalidEmail:
                     self.handleError(String.invalidEmail, error: error)
@@ -594,7 +600,7 @@ final class ViewModel: ObservableObject {
         }
         
         FirebaseManager.shared.auth.signIn(withEmail: email, password: password) { result, error in
-            if let error = error as NSError?, let errorCode = AuthErrorCode.Code(rawValue: error.code) {
+            if let error = error as NSError?, let errorCode = AuthErrorCode(rawValue: error.code) {
                 switch errorCode {
                 case .invalidEmail:
                     self.handleError(String.invalidEmail, error: error)
@@ -634,7 +640,7 @@ final class ViewModel: ObservableObject {
         onIndicator = true
         
         FirebaseManager.shared.auth.signIn(withEmail: email, password: password) { result, error in
-            if let error = error as NSError?, let errorCode = AuthErrorCode.Code(rawValue: error.code) {
+            if let error = error as NSError?, let errorCode = AuthErrorCode(rawValue: error.code) {
                 switch errorCode {
                 case .invalidEmail:
                     self.handleError(String.invalidEmail, error: error)
@@ -687,7 +693,7 @@ final class ViewModel: ObservableObject {
         onIndicator = true
         
         FirebaseManager.shared.auth.signIn(withEmail: email, password: password) { result, error in
-            if let error = error as NSError?, let errorCode = AuthErrorCode.Code(rawValue: error.code) {
+            if let error = error as NSError?, let errorCode = AuthErrorCode(rawValue: error.code) {
                 switch errorCode {
                 case .invalidEmail:
                     self.handleError(String.invalidEmail, error: error)
@@ -787,7 +793,7 @@ final class ViewModel: ObservableObject {
     ///   - errorMessage: エラーメッセージ
     /// - Returns: なし
     func handleNetworkError(error: Error?, errorMessage: String) {
-        if let error = error as NSError?, let errorCode = AuthErrorCode.Code(rawValue: error.code) {
+        if let error = error as NSError?, let errorCode = AuthErrorCode(rawValue: error.code) {
             switch errorCode {
             case .networkError:
                 self.handleError(String.networkError, error: error)
@@ -1345,25 +1351,25 @@ final class ViewModel: ObservableObject {
     ///   - body: 通知テキスト
     ///   - identifier: 通知種類
     /// - Returns: なし
-    func sendNotificationRequest(title: String, body: String, identifier: String) {
-        
-        // 通知オブジェクト作成
-        let content = UNMutableNotificationContent()
-        content.title = title
-        content.body = body
-        content.sound = .default
-        // 通知を発行するトリガー(条件)を設定
-        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 5, repeats: false)
-        let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
-        
-        // 現在のバッジ数を取得
-        let currentBadgeCount = UIApplication.shared.applicationIconBadgeNumber
-        // バッジ数を1増やす
-        UIApplication.shared.applicationIconBadgeNumber = currentBadgeCount + 1
-        
-        // 通知を登録
-        UNUserNotificationCenter.current().add(request, withCompletionHandler: nil)
-    }
+//    func sendNotificationRequest(title: String, body: String, identifier: String) {
+//        
+//        // 通知オブジェクト作成
+//        let content = UNMutableNotificationContent()
+//        content.title = title
+//        content.body = body
+//        content.sound = .default
+//        // 通知を発行するトリガー(条件)を設定
+//        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 5, repeats: false)
+//        let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
+//        
+//        // 現在のバッジ数を取得
+//        let currentBadgeCount = UIApplication.shared.applicationIconBadgeNumber
+//        // バッジ数を1増やす
+//        UIApplication.shared.applicationIconBadgeNumber = currentBadgeCount + 1
+//        
+//        // 通知を登録
+//        UNUserNotificationCenter.current().add(request, withCompletionHandler: nil)
+//    }
     
     /// Push通知送信処理
     /// - Parameters:
@@ -1372,37 +1378,276 @@ final class ViewModel: ObservableObject {
     ///   - title: 通知タイトル
     ///   - body: 通知本文
     /// - Returns: なし
-    func sendPushNotification(to token: String, uid: String, title: String, body: String, completion: @escaping () -> Void) {
-        let fcmServerKey = "AIzaSyBAFkV7v2M6l06Ibzxc5b68JEYVkN780-0"            // fcmサーバーキー
-        let endpoint = "https://fcm.googleapis.com/fcm/send"                    // エンドポイント
-        
-        guard let url = URL(string: endpoint) else { return }
-        
-        // TODO: - fcmサーバーキーが本当に正しいか確認。その後、実行して確認。
-        
-        let paramString: [String: Any] = ["to": token,
-                                          "notification": ["title": title, "body": body],
-                                          "data": ["userId": uid]]
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.httpBody = try? JSONSerialization.data(withJSONObject: paramString, options: [.prettyPrinted])
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.setValue("key=\(fcmServerKey)", forHTTPHeaderField: "Authorization")
-        
-        let task = URLSession.shared.dataTask(with: request) { data, _, _ in
-            do {
-                if let jsonData = data {
-                    if let jsonDataDict = try JSONSerialization.jsonObject(with: jsonData, options: JSONSerialization.ReadingOptions.allowFragments) as? [String: AnyObject] {
-                        print("Received data: \(jsonDataDict)")
-                    }
-                }
-            } catch let err as NSError {
-                print(err.debugDescription)
-            }
+//    func sendPushNotification(to token: String, uid: String, title: String, body: String, completion: @escaping () -> Void) {
+//        let fcmServerKey = "AIzaSyBAFkV7v2M6l06Ibzxc5b68JEYVkN780-0"            // fcmサーバーキー
+////        let endpoint = "https://fcm.googleapis.com/fcm/send"                    // エンドポイント
+//        let endpoint = "https://fcm.googleapis.com/v1/projects/sheeba-925a7/messages:send"          // エンドポイント
+//        
+//        guard let url = URL(string: endpoint) else { return }
+//        
+//        let paramString: [String: Any] = ["to": token,
+//                                          "notification": ["title": title, "body": body],
+//                                          "data": ["userId": uid]]
+//        var request = URLRequest(url: url)
+//        request.httpMethod = "POST"
+//        request.httpBody = try? JSONSerialization.data(withJSONObject: paramString, options: [.prettyPrinted])
+//        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+//        request.setValue("key=\(fcmServerKey)", forHTTPHeaderField: "Authorization")
+//        
+//        let task = URLSession.shared.dataTask(with: request) { data, _, _ in
+//            do {
+//                if let jsonData = data {
+//                    if let jsonDataDict = try JSONSerialization.jsonObject(with: jsonData, options: JSONSerialization.ReadingOptions.allowFragments) as? [String: AnyObject] {
+//                        print("Received data: \(jsonDataDict)")
+//                    }
+//                }
+//            } catch let err as NSError {
+//                print(err.debugDescription)
+//            }
+//        }
+//        
+//        task.resume()
+//        completion()
+//    }
+//    private let serviceAccountKeyPath = Bundle.main.path(forResource: "serviceAccount", ofType: "json")!
+    
+//    func generateAccessToken() -> String {
+//        let privateKeyPath = URL(fileURLWithPath: getAbsolutePath(relativePath: "/path/to/privateKey.key"))
+//        let privateKey: Data = try Data(contentsOf: privateKeyPath, options: .alwaysMapped)
+//        let publicKeyPath = URL(fileURLWithPath: getAbsolutePath(relativePath: "/path/to/publicKey.key"))
+//        let publicKey: Data = try Data(contentsOf: publicKeyPath, options: .alwaysMapped)
+//        
+//        let clientEmail = "firebase-adminsdk-eonuo@sheeba-925a7.iam.gserviceaccount.com"
+//        
+//        // Initialize JWTSigner for RS256 (RSA SHA-256)
+//        let key = try Insecure.RSA.PrivateKey(pem: privateKey)
+//        //        let key = try ES256PrivateKey(pem: privateKey)
+//        //        let keys = await JWTKeyCollection().add(ecdsa: key)
+//        //            let keys = await JWTKeyCollection().add(rsa: key, digestAlgorithm: .sha256)
+//        let signers = JWTSigner.rs256(privateKey: privateKey)
+//        
+//        let payload = PayloadData(
+//            iss: clientEmail,
+//            scope: "https://www.googleapis.com/auth/firebase.messaging",
+//            aud: "https://oauth2.googleapis.com/token",
+//            exp: Date().addingTimeInterval(3600), // 1 hour expiration
+//            iat: Date()
+//        )
+//        
+//        // Generate JWT token
+//        let jwt: String
+////        do {
+////            jwt = try await keys.sign(payload)
+////        } catch {
+////            print("Error sign payload data: \(error)")
+////            throw error
+////        }
+//        
+//        // Exchange the JWT for an access token
+//        let url = URL(string: "https://oauth2.googleapis.com/token")!
+//        var request = URLRequest(url: url)
+//        request.httpMethod = "POST"
+//        request.addValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+//        
+//        let body = "grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=\(jwt)"
+//        request.httpBody = body.data(using: .utf8)
+//        
+//        //        let semaphore = DispatchSemaphore(value: 0)
+//        //        var accessToken: String?
+//        //        var requestError: Error?
+//        
+//        URLSession.shared.dataTask(with: request) { data, response, error in
+//            if let error = error {
+//                //                requestError = error
+//                print("Error requesting access token: \(error)")
+//            } else if let data = data {
+//                do {
+//                    if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any],
+//                       let token = json["access_token"] as? String {
+//                        self.accessToken = token
+//                    } else {
+//                        print("Invalid response data: \(String(data: data, encoding: .utf8) ?? "nil")")
+//                    }
+//                } catch {
+//                    //                    requestError = error
+//                    print("Error parsing response data: \(error)")
+//                }
+//            }
+//            //            semaphore.signal()
+//        }.resume()
+//    }
+    
+    /// Push通知送信処理
+    /// - Parameters:
+    ///   - fcmToken: 送信先のFCMToken
+    ///   - title: 通知タイトル
+    ///   - body: 通知本文
+    /// - Returns: なし
+    func sendPushNotification(fcmToken: String, title: String, body: String) async {
+        // アクセストークンを作成
+        do {
+            try await generateAccessToken()
+        } catch {
+            print("Failed generate acccess token:\(error)")
         }
         
-        task.resume()
-        completion()
+        guard let url = URL(string: "https://fcm.googleapis.com/v1/projects/sheeba-925a7/messages:send") else {
+            print("Invalid URL")
+            return
+        }
+        
+        let payload: [String: Any] = [
+            "message": [
+                "token": fcmToken,
+                "notification": [
+                    "title": title,
+                    "body": body
+                ]
+            ]
+        ]
+        
+        guard let jsonData = try? JSONSerialization.data(withJSONObject: payload) else {
+            print("Failed to create JSON data")
+            return
+        }
+        
+        // トークンを生成
+//        var token = ""
+//        do {
+//            token = try await generateAccessToken()
+//            print("Access token: \(token)")
+//        } catch {
+//            print("Failed to generate access token: \(error)")
+//        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
+        request.httpBody = jsonData
+        
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            if let error = error {
+                DispatchQueue.main.async {
+                    print("Error: \(error.localizedDescription)")
+                }
+                return
+            }
+            
+            if let httpResponse = response as? HTTPURLResponse {
+                DispatchQueue.main.async {
+                    print("Response: \(httpResponse.statusCode)")
+                }
+            }
+        }.resume()
+        
+        // 現在のバッジ数を取得し、バッジ数を1増やす
+//        let  = await UIApplication.shared.applicationIconBadgeNumber + 1
+    }
+
+    /// アクセストークンを作成
+    /// - Parameters:　なし
+    /// - Returns: なし
+    func generateAccessToken() async throws {
+        // Replace with your actual service account private key and client email
+        let privateKey = """
+          -----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQChbf9pmBytnWOB\nMUKJOt/6VfvflNFqh/ot/MVnzF7klsYIWuawTKijhS6WeLeEOamdO0pTjKTiyDJ/\nMUGDt8FIbrIeyU7wXRWpmFfpSEyHVwa5i+X5CNHFPKOFK13ZRN2tJ2hovwYAbL5P\nJgokRYQMiuOFb2tlvubjSeu6Pb1uMEGtNmnsE1yXvBTrCPAM7T5VXKxvW189qPE1\n0IHVb3z9+axJ+ziGeIgWS6sKrpw+Ri1BwySiJ4aVB66S3jbQam/Q9FGe2Fg+eKq1\nKFjrwskNXzm/bSS9OT0fkvEV/tqeMKWIg7Ky+cWmoPchqT+Yk/IrR0jxaYhMnJvg\n47OgqWNzAgMBAAECggEAK1ks2W+h39MgObx/F/ep1oDJYogFVhyOh1PVtKJSJwL/\nyZWTVes367UjRf/Dk+uiCtk1g8sEKevFd5dD9vlcmzUyeobnPi9Y1lJU5Q1nk35A\njYmuJxoBrnuyk1uKV4IhHtKyvFHzbCDHV9yoo4XRSEbxgs7hIZDKUmVyue/DUveP\nohEPbhHJdCBD0QIUjUpsddoiixCSVCMaRPKASOHjB1AYMqahEhH8cDD4QHXTW2Sc\nfGLTe0vej6k/8VWacgPD6eB3WvJ0zkwziqXEyK6gCo+9qjxmO0459KHuaASNjmSl\n76+R2cdtu0sbmmn06zS5tdlxF7qNRsWDPxCQuVdpvQKBgQDhRsrWpJrec4fpdauF\n8EX3in7ee+Fo+XxD+eMNkTGx8lbxY0O+xLLzCFGGC0N3StAwGSPZPFXIaXGJLd93\nmWKsXiKeOyGgCJULpY0s9cDWTX/1ssw1CI6Npshis5oRxkCsS05nZtcbEpyWhoWF\n/vdE4eeZnGw7wUOvisMVcaA2VwKBgQC3chV3WP8MoKekauKwwKc40tgJyxQdZrHf\n9wfNWE5ZPIo0RnkLlapX62amLkAgCc/2Q3ppzknfHF27g+JkL/NGhtZPBMFzi+G/\nRQCmhIBGmAvkS8oanZEz/okCGqKsIQ2qdsE7mLDLbb1kGM69Bf9RuofBLaVT6jAG\nX7dnnPhyRQKBgCVg06MNqMykKrbn2U/d8B4EksxjjaEXVDELM0s6/h3icd6Xc9Qh\nWvfMN4qgL8+JUEXKxhHzWuBn7niubdewUZj7/Y53jTq6cdB+5Y/CLv7f2Q1xX0Sl\naNHEDJej6TptxKlRzW6Gt8Y8LlMjeuAiz/BT81Ofiq3XgV2NDpVuRwD9AoGBALVS\n68rzSe8mYW5QRFAnrWKqbeaIOBKzroBNQgYEEjV8dLMlMYJ05lJPGUCLmNDSQiAO\nJNKumDATbsbpnn4fM1zz7KNgdQMMMhCIWRM/BzhAFAkNrPBP7PWy06QjxcVUSpjD\nF08cJyx9BWYKa1dFtVAIiyU0RCXE5sF2HOgqrRztAoGATNFo1f6raW1RMbO2HMPj\n7aiDJ8EJ6OXbLek3r2NvJasVDXYEvgD5ggwxXafJazb2GLrj593ycpDvqfGckguP\niO/O+O7l4pzHG6uhzoSGO9IFqbDP7YkBocoxth2jH2NUPSQskjFd3NJ4/58iheN+\nUxrSCdIuJIgBCKyudYPlVzY=\n-----END PRIVATE KEY-----\n
+        """
+        let clientEmail = "firebase-adminsdk-eonuo@sheeba-925a7.iam.gserviceaccount.com"
+
+        // Initialize JWTSigner for RS256 (RSA SHA-256)
+        let key = try Insecure.RSA.PrivateKey(pem: privateKey)
+//        let key = try ES256PrivateKey(pem: privateKey)
+//        let keys = await JWTKeyCollection().add(ecdsa: key)
+        let keys = await JWTKeyCollection().add(rsa: key, digestAlgorithm: .sha256)
+//        let signers = JWTSigner.rs256(key: try .private(pem: privateKey))
+
+        let payload = PayloadData(
+            iss: clientEmail,
+            scope: "https://www.googleapis.com/auth/firebase.messaging",
+            aud: "https://oauth2.googleapis.com/token",
+            exp: Date().addingTimeInterval(3600), // 1 hour expiration
+            iat: Date()
+        )
+
+        // Generate JWT token
+        let jwt: String
+        do {
+            jwt = try await keys.sign(payload)
+        } catch {
+            print("Error sign payload data: \(error)")
+            throw error
+        }
+
+        // Exchange the JWT for an access token
+        let url = URL(string: "https://oauth2.googleapis.com/token")!
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.addValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+
+        let body = "grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=\(jwt)"
+        request.httpBody = body.data(using: .utf8)
+
+//        let semaphore = DispatchSemaphore(value: 0)
+//        var accessToken: String?
+//        var requestError: Error?
+        
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            if let error = error {
+//                requestError = error
+                print("Error requesting access token: \(error)")
+            } else if let data = data {
+                do {
+                    if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any],
+                       let token = json["access_token"] as? String {
+                        self.accessToken = token
+                    } else {
+                        print("Invalid response data: \(String(data: data, encoding: .utf8) ?? "nil")")
+                    }
+                } catch {
+//                    requestError = error
+                    print("Error parsing response data: \(error)")
+                }
+            }
+//            semaphore.signal()
+        }.resume()
+
+//        await withTaskCancellationHandler {
+//            let urlSessionTask = URLSession.shared.dataTask(with: request) { data, response, error in
+//                if let error = error {
+//                    requestError = error
+//                    print("Error requesting access token: \(error)")
+//                } else if let data = data {
+//                    do {
+//                        if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any],
+//                           let token = json["access_token"] as? String {
+//                            accessToken = token
+//                        } else {
+//                            print("Invalid response data: \(String(data: data, encoding: .utf8) ?? "nil")")
+//                        }
+//                    } catch {
+//                        requestError = error
+//                        print("Error parsing response data: \(error)")
+//                    }
+//                }
+//                semaphore.signal()
+//            }
+//        } onCancel: {
+//            urlSessionTask?.cancel()
+//        }
+        
+//        semaphore.wait()
+
+//        if let error = requestError {
+//            throw error
+//        }
+
+        // Return the access token or handle error if nil
+//        guard let token = accessToken else {
+//            fatalError("Failed to retrieve access token")
+//        }
+//
+//        return token
     }
     
     
@@ -1429,4 +1674,11 @@ final class ViewModel: ObservableObject {
         formatter.timeStyle = .short
         return formatter.string(from: date)
     }
+}
+
+struct MyClaims: Claims {
+    let iss: String
+    let sub: String
+    let exp: Date
+    let admin: Bool
 }

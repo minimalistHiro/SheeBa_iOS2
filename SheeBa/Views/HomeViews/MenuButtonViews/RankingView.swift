@@ -27,18 +27,17 @@ struct RankingView: View {
                     }
                     
                     // 全ユーザーリセットボタン
-                    if let currentUser = vm.currentUser, currentUser.isOwner {
-                        Button {
-                            isShowResetPointAlert = true
-                        } label: {
-                            Text("全ユーザーのポイントをリセットする")
-                                .foregroundStyle(Color.red)
-                        }
-                    }
+//                    if let currentUser = vm.currentUser, currentUser.isOwner {
+//                        Button {
+//                            isShowResetPointAlert = true
+//                        } label: {
+//                            Text("全ユーザーのポイントをリセットする")
+//                                .foregroundStyle(Color.red)
+//                        }
+//                    }
                 }
                 .padding(.bottom, 20)
             }
-            .asCloseButton()
         }
         .navigationTitle("ランキング")
         .navigationBarTitleDisplayMode(.inline)
@@ -51,7 +50,6 @@ struct RankingView: View {
                 fetchAllUsersOrderByMoney()
             }
         }
-        .asBackButton()
         .asSingleAlert(title: "",
                        isShowAlert: $vm.isShowError,
                        message: vm.alertMessage,

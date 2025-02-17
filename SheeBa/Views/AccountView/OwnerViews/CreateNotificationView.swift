@@ -111,7 +111,6 @@ struct CreateNotificationView: View {
                 
                 Spacer()
             }
-            .asCloseButton()
             //            }
             // タップでキーボードを閉じるようにするため
             .contentShape(Rectangle())
@@ -145,7 +144,6 @@ struct CreateNotificationView: View {
                        isShowAlert: $vm.isShowError,
                        message: vm.errorMessage,
                        didAction: { vm.isShowError = false })
-        .asBackButton()
     }
     
     // MARK: - お知らせを全ユーザーに保存
@@ -171,7 +169,7 @@ struct CreateNotificationView: View {
             vm.persistNotification(document1: user.uid, document2: title, data: data)
         }
         // 通知を送信
-        vm.sendNotificationRequest(title: title, body: text, identifier: title)
+//        vm.sendNotificationRequest(title: title, body: text, identifier: title)
         
         vm.onIndicator = false
         self.isShowCreateNotification = true

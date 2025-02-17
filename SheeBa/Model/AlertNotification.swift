@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import FirebaseFirestoreSwift
+import FirebaseFirestore
 
 struct AlertNotification: Hashable, Identifiable {
     @DocumentID var id: String?

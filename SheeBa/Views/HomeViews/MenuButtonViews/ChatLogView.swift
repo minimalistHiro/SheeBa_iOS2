@@ -59,7 +59,6 @@ struct ChatLogView: View {
                 }
             }
         }
-        .asBackButton()
         .asSingleAlert(title: "",
                        isShowAlert: $vm.isShowError,
                        message: vm.errorMessage,
@@ -171,8 +170,11 @@ struct ChatLogView: View {
             Button {
                 focus = false
                 vm.handleSend(toId: chatUserUID, chatText: chatText, lastText: lastText, isSendPay: false)
+//                vm.sendNotificationRequest(title: String(vm.chatUser?.username.prefix(20) ?? ""), body: chatText, identifier: String(vm.chatUser?.username.prefix(20) ?? ""))
                 // 通知を送信
-                vm.sendNotificationRequest(title: String(vm.chatUser?.username.prefix(20) ?? ""), body: chatText, identifier: String(vm.chatUser?.username.prefix(20) ?? ""))
+//                Task {
+//                    await vm.sendPushNotification(fcmToken: String(vm.chatUser?.fcmToken ?? ""), title: String(vm.chatUser?.username.prefix(20) ?? ""), body: chatText)
+//                }
                 // 送金処理以外（通常テキスト送信）の場合のみ実行
                 if !isSendPay {
                     self.lastText = chatText

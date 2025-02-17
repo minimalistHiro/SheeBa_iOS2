@@ -30,9 +30,15 @@ struct EditStoreInfoView: View {
     @State private var storename = ""                       // 店舗名
     @State private var no = "0"                             // 店舗番号
     @State private var getPoint = "0"                       // 獲得ポイント
+    @State private var profile = ""                         // プロフィール
     @State private var genre = ""                           // ジャンル
     @State private var phoneNumber = ""                     // 電話番号
+    @State private var address = ""                         // 住所
+    @State private var openingTimes = ""                    // 営業時間
     @State private var webURL = ""                          // Webサイト
+    @State private var xURL = ""                            // XのURL
+    @State private var instagramURL = ""                    // InstagramのURL
+    @State private var facebookURL = ""                     // FacebookのURL
     @State private var movieURL = ""                        // 紹介動画
     @State private var pointX = ""                          // X座標
     @State private var pointY = ""                          // Y座標
@@ -155,7 +161,7 @@ struct EditStoreInfoView: View {
                         TextField("店舗番号", text: $no)
                             .keyboardType(.numberPad)
                             .focused($focus)
-                            .frame(width: 20)
+                            .frame(width: 30)
                     }
                     .padding()
                     
@@ -172,12 +178,17 @@ struct EditStoreInfoView: View {
                         TextField("獲得ポイント数", text: $getPoint)
                             .keyboardType(.numberPad)
                             .focused($focus)
-                            .frame(width: 20)
+                            .frame(width: 30)
                     }
                     .padding()
                     
                     InputText.InputPicker(editText: $genre, titleText: "ジャンル", explanationText: "店舗ジャンルを選択してください", pickers: genres)
                         .frame(width: 300)
+                    
+                    TextEditor(text: $profile)
+                        .frame(width: 300, height: 300)
+                        .border(.black)
+                        .focused($focus.projectedValue)
                     
                     // 電話番号
                     HStack {
@@ -189,6 +200,19 @@ struct EditStoreInfoView: View {
                     }
                     .padding()
                     
+                    // 住所
+                    HStack {
+                        Text("住所")
+                        Spacer()
+                        TextField("住所", text: $address)
+                            .focused($focus)
+                            .frame(width: 150)
+                    }
+                    .padding()
+                    
+                    // 営業時間
+                    
+                    
                     // Webサイト
                     HStack {
                         Text("Webサイト")
@@ -198,6 +222,37 @@ struct EditStoreInfoView: View {
                             .frame(width: 150)
                     }
                     .padding()
+                    
+                    // XのURL
+                    HStack {
+                        Text("XのURL")
+                        Spacer()
+                        TextField("XのURL", text: $xURL)
+                            .focused($focus)
+                            .frame(width: 150)
+                    }
+                    .padding()
+                    
+                    // InstagramのURL
+                    HStack {
+                        Text("InstagramのURL")
+                        Spacer()
+                        TextField("InstagramのURL", text: $instagramURL)
+                            .focused($focus)
+                            .frame(width: 150)
+                    }
+                    .padding()
+                    
+                    // facebookのURL
+                    HStack {
+                        Text("facebookのURL")
+                        Spacer()
+                        TextField("facebookのURL", text: $facebookURL)
+                            .focused($focus)
+                            .frame(width: 150)
+                    }
+                    .padding()
+                    
                     
                     // 紹介動画
                     HStack {
@@ -266,9 +321,15 @@ struct EditStoreInfoView: View {
             isEnableScan = store.isEnableScan
             isEvent = store.isEvent
             getPoint = String(store.getPoint)
+            profile = store.profile
             genre = store.genre
             phoneNumber = store.phoneNumber
+            address = store.address
+            openingTimes = store.openingTimes
             webURL = store.webURL
+            xURL = store.xURL
+            instagramURL = store.instagramURL
+            facebookURL = store.facebookURL
             movieURL = store.movieURL
             pointX = store.pointX
             pointY = store.pointY
@@ -279,7 +340,6 @@ struct EditStoreInfoView: View {
         .sheet(isPresented: $isShowActivityView) {
             ActivityView(activityItems: [shareImage as Any], applicationActivities: nil)
         }
-        .asBackButton()
         .navigationTitle("店舗情報を変更")
         .navigationBarTitleDisplayMode(.inline)
         .fullScreenCover(isPresented: $isShowImagePicker) {
@@ -322,8 +382,14 @@ struct EditStoreInfoView: View {
                 FirebaseConstants.storename: storename,
                 FirebaseConstants.no: Int(no) ?? 0,
                 FirebaseConstants.genre: genre,
+                FirebaseConstants.profile: profile,
                 FirebaseConstants.phoneNumber: phoneNumber,
+                FirebaseConstants.address: address,
+                FirebaseConstants.openingTimes: openingTimes,
                 FirebaseConstants.webURL: webURL,
+                FirebaseConstants.xURL: xURL,
+                FirebaseConstants.instagramURL: instagramURL,
+                FirebaseConstants.facebookURL: facebookURL,
                 FirebaseConstants.movieURL: movieURL,
                 FirebaseConstants.profileImageUrl: imageUrl?.absoluteString ?? "",
                 FirebaseConstants.getPoint: Int(getPoint) ?? 1,
@@ -337,8 +403,14 @@ struct EditStoreInfoView: View {
                 FirebaseConstants.storename: storename,
                 FirebaseConstants.no: Int(no) ?? 0,
                 FirebaseConstants.genre: genre,
+                FirebaseConstants.profile: profile,
                 FirebaseConstants.phoneNumber: phoneNumber,
+                FirebaseConstants.address: address,
+                FirebaseConstants.openingTimes: openingTimes,
                 FirebaseConstants.webURL: webURL,
+                FirebaseConstants.xURL: xURL,
+                FirebaseConstants.instagramURL: instagramURL,
+                FirebaseConstants.facebookURL: facebookURL,
                 FirebaseConstants.movieURL: movieURL,
                 FirebaseConstants.getPoint: Int(getPoint) ?? 1,
                 FirebaseConstants.isEnableScan: isEnableScan,

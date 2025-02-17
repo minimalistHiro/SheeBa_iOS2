@@ -81,7 +81,6 @@ struct QRCodeView: View {
                 Spacer()
             }
         }
-        .asBackButton()
         .onAppear {
             UIScreen.main.brightness = 1.0
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {

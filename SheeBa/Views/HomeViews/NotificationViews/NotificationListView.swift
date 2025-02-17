@@ -73,7 +73,6 @@ struct NotificationListView: View {
                 Spacer()
                     .listRowSeparator(.hidden)
             }
-            .asCloseButton()
             .listStyle(.inset)
             .environment(\.defaultMinListRowHeight, 60)
             .navigationTitle("お知らせ")
@@ -82,7 +81,6 @@ struct NotificationListView: View {
                 ScaleEffectIndicator(onIndicator: $vm.onIndicator)
             }
         }
-        .asBackButton()
         .onAppear {
             if FirebaseManager.shared.auth.currentUser?.uid != nil {
                 vm.fetchCurrentUser()

@@ -25,11 +25,17 @@ struct CreateStoresView: View {
     @State private var isEnableScan = true                  // スキャンの可否
     @State private var storename = ""                       // 店舗名
     @State private var no = "0"                             // 店舗番号
+    @State private var address = ""                         // 住所
+    @State private var openingTimes = ""                    // 営業時間
     @State private var getPoint = "0"                       // 獲得ポイント
     @State private var genre = ""                           // ジャンル
+    @State private var profile = ""                         // プロフィール
     @State private var phoneNumber = ""                     // 電話番号
     @State private var webURL = ""                          // Webサイト
     @State private var movieURL = ""                        // 紹介動画
+    @State private var xURL = ""                            // XのURL
+    @State private var instagramURL = ""                    // InstagramのURL
+    @State private var facebookURL = ""                     // FacebookのURL
     @State private var pointX = ""                          // X座標
     @State private var pointY = ""                          // Y座標
     
@@ -86,7 +92,7 @@ struct CreateStoresView: View {
                         TextField("店舗番号", text: $no)
                             .keyboardType(.numberPad)
                             .focused($focus)
-                            .frame(width: 20)
+                            .frame(width: 30)
                     }
                     .padding()
                     
@@ -103,7 +109,7 @@ struct CreateStoresView: View {
                         TextField("獲得ポイント数", text: $getPoint)
                             .keyboardType(.numberPad)
                             .focused($focus)
-                            .frame(width: 20)
+                            .frame(width: 30)
                     }
                     .padding()
                     
@@ -124,6 +130,12 @@ struct CreateStoresView: View {
                     InputText.InputPicker(editText: $genre, titleText: "ジャンル", explanationText: "店舗ジャンルを選択してください", pickers: genres)
                         .frame(width: 300)
                     
+                    Text("店舗紹介文")
+                    TextEditor(text: $profile)
+                        .frame(width: 300, height: 300)
+                        .border(.black)
+                        .focused($focus.projectedValue)
+                    
                     // 電話番号
                     HStack {
                         Text("電話番号")
@@ -134,11 +146,54 @@ struct CreateStoresView: View {
                     }
                     .padding()
                     
+                    // 住所
+                    HStack {
+                        Text("住所")
+                        Spacer()
+                        TextField("住所", text: $address)
+                            .focused($focus)
+                            .frame(width: 150)
+                    }
+                    .padding()
+                    
+                    // 営業時間
+                    
+                    
                     // Webサイト
                     HStack {
                         Text("Webサイト")
                         Spacer()
                         TextField("Webサイト", text: $webURL)
+                            .focused($focus)
+                            .frame(width: 150)
+                    }
+                    .padding()
+                    
+                    // XのURL
+                    HStack {
+                        Text("XのURL")
+                        Spacer()
+                        TextField("XのURL", text: $xURL)
+                            .focused($focus)
+                            .frame(width: 150)
+                    }
+                    .padding()
+                    
+                    // InstagramのURL
+                    HStack {
+                        Text("InstagramのURL")
+                        Spacer()
+                        TextField("InstagramのURL", text: $instagramURL)
+                            .focused($focus)
+                            .frame(width: 150)
+                    }
+                    .padding()
+                    
+                    // facebookのURL
+                    HStack {
+                        Text("facebookのURL")
+                        Spacer()
+                        TextField("facebookのURL", text: $facebookURL)
                             .focused($focus)
                             .frame(width: 150)
                     }
@@ -197,12 +252,10 @@ struct CreateStoresView: View {
                     .padding(.bottom)
                 }
             }
-            .asCloseButton()
         }
         .onAppear {
             uid = generator(30)
         }
-        .asBackButton()
         .navigationTitle("新規店舗を作成")
         .navigationBarTitleDisplayMode(.inline)
         .fullScreenCover(isPresented: $isShowImagePicker) {
@@ -248,8 +301,14 @@ struct CreateStoresView: View {
             FirebaseConstants.storename: storename,
             FirebaseConstants.no: Int(no) ?? 0,
             FirebaseConstants.genre: genre,
+            FirebaseConstants.profile: profile,
             FirebaseConstants.phoneNumber: phoneNumber,
+            FirebaseConstants.address: address,
+            FirebaseConstants.openingTimes: openingTimes,
             FirebaseConstants.webURL: webURL,
+            FirebaseConstants.xURL: xURL,
+            FirebaseConstants.instagramURL: instagramURL,
+            FirebaseConstants.facebookURL: facebookURL,
             FirebaseConstants.movieURL: movieURL,
             FirebaseConstants.profileImageUrl: imageUrl?.absoluteString ?? "",
             FirebaseConstants.getPoint: Int(getPoint) ?? 1,

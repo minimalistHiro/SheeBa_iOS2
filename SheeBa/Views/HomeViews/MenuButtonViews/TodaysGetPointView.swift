@@ -45,7 +45,6 @@ struct TodaysGetPointView: View {
                 }
                 .padding(.bottom, 20)
             }
-            .asCloseButton()
         }
         .navigationTitle("本日の獲得ポイント一覧")
         .navigationBarTitleDisplayMode(.inline)
@@ -55,7 +54,6 @@ struct TodaysGetPointView: View {
                 fetchStorePoints()
             }
         }
-        .asBackButton()
         .asSingleAlert(title: "",
                        isShowAlert: $vm.isShowError,
                        message: vm.alertMessage,

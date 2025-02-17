@@ -46,7 +46,6 @@ struct UserAttributeView: View {
         }
         .navigationTitle("ユーザー属性")
         .navigationBarTitleDisplayMode(.inline)
-        .asBackButton()
         .onAppear {
             fetchAllUsers()
         }

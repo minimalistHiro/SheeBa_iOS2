@@ -17,8 +17,8 @@ struct ContentView: View {
     @State private var isUserCurrentryLoggedOut = false     // ユーザーのログインの有無
     
     init() {
-        
         isUserCurrentryLoggedOut = FirebaseManager.shared.auth.currentUser?.uid == nil
+        
 //        if FirebaseManager.shared.auth.currentUser?.uid != nil {
 //            vm.fetchCurrentUser()
 //            vm.fetchRecentMessages()

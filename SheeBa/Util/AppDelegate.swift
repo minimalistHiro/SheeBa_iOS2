@@ -51,7 +51,6 @@ class AppDelegate: NSObject, UIApplicationDelegate {
                 print("FCM registration token: \(token)")
                 if let uid = FirebaseManager.shared.auth.currentUser?.uid {
                     // fcmTokenがNULL若しくは空の場合、DBにfcmTokenを保存する。
-                    print("DBにfcmTokenを更新しました: \(token)")
                     let data = [FirebaseConstants.fcmToken: token,]
                     self.vm.updateUser(document: uid, data: data)
                 }
@@ -97,7 +96,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
     ) {
         // バッジ数を更新する
-//        incrementBadgeCount()
+        incrementBadgeCount()
         completionHandler([[.banner, .list, .sound, .badge]])
     }
 

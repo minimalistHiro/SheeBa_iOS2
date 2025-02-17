@@ -39,7 +39,7 @@ struct FirebaseConstants {
     static let toId = "toId"
     static let text = "text"
     static let isSendPay = "isSendPay"
-static let timestamp = "timestamp"
+    static let timestamp = "timestamp"
     
     // recent_messages
     static let recentMessages = "recent_messages"
@@ -74,6 +74,11 @@ static let timestamp = "timestamp"
     static let stores = "stores"
     static let storename = "storename"
     static let isEvent = "isEvent"
+    static let profile = "profile"
+    static let openingTimes = "openingTimes"
+    static let xURL = "xURL"
+    static let instagramURL = "instagramURL"
+    static let facebookURL = "facebookURL"
     
     // DBに保存しないデータ
     static let rankign = "rankign"

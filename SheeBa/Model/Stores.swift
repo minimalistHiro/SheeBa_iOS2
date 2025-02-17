@@ -7,7 +7,6 @@
 
 import Foundation
 import FirebaseFirestore
-import FirebaseFirestoreSwift
 
 struct Stores: Hashable, Identifiable {
     var id: String { uid }
@@ -15,9 +14,15 @@ struct Stores: Hashable, Identifiable {
     let storename: String
     let no: Int
     let genre: String
+    let profile: String
     let phoneNumber: String
+    let address: String
+    let openingTimes: String
     let webURL: String
     let movieURL: String
+    let xURL: String
+    let instagramURL: String
+    let facebookURL: String
     let profileImageUrl: String
     let getPoint: Int
     let isEnableScan: Bool
@@ -30,9 +35,15 @@ struct Stores: Hashable, Identifiable {
         self.storename = data[FirebaseConstants.storename] as? String ?? ""
         self.no = data[FirebaseConstants.no] as? Int ?? 0
         self.genre = data[FirebaseConstants.genre] as? String ?? ""
+        self.profile = data[FirebaseConstants.profile] as? String ?? ""
         self.phoneNumber = data[FirebaseConstants.phoneNumber] as? String ?? ""
+        self.address = data[FirebaseConstants.address] as? String ?? ""
+        self.openingTimes = data[FirebaseConstants.openingTimes] as? String ?? ""
         self.webURL = data[FirebaseConstants.webURL] as? String ?? ""
         self.movieURL = data[FirebaseConstants.movieURL] as? String ?? ""
+        self.xURL = data[FirebaseConstants.xURL] as? String ?? ""
+        self.instagramURL = data[FirebaseConstants.instagramURL] as? String ?? ""
+        self.facebookURL = data[FirebaseConstants.facebookURL] as? String ?? ""
         self.profileImageUrl = data[FirebaseConstants.profileImageUrl] as? String ?? ""
         self.getPoint = data[FirebaseConstants.getPoint] as? Int ?? 0
         self.isEnableScan = data[FirebaseConstants.isEnableScan] as? Bool ?? false

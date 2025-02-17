@@ -18,9 +18,9 @@ struct AccountView: View {
     @State private var isShowConfirmationWithdrawalAlert = false        // 退会確認アラート
     @State private var isShowSuccessWithdrawalAlert = false             // 退会成功アラート
     @State private var isShowSignOutAlert = false                       // 強制サインアウトアラート
-    @State private var isShowCreateNotificationView = false             // CreateNotificationView表示有無
-    @State private var isShowCreateStoresView = false                   // CreateStoresView表示有無
-    @State private var isShowStoreEditListVIew = false                  // StoreEditListVIew表示有無
+//    @State private var isShowCreateNotificationView = false             // CreateNotificationView表示有無
+//    @State private var isShowCreateStoresView = false                   // CreateStoresView表示有無
+//    @State private var isShowStoreEditListVIew = false                  // StoreEditListVIew表示有無
     
     @Binding var isUserCurrentryLoggedOut: Bool
     
@@ -91,7 +91,7 @@ struct AccountView: View {
                                 .dynamicTypeSize(.medium)
                                 .padding(.bottom, 10)
                             
-                            Text("バージョン：2.0.7")
+                            Text("Appバージョン：2.0.8")
                                 .font(.caption)
                                 .dynamicTypeSize(.medium)
                             
@@ -109,18 +109,8 @@ struct AccountView: View {
             List {
                 if let currentUser = vm.currentUser, currentUser.isOwner || currentUser.isStoreOwner {
                     // 店舗お知らせを作成
-                    Button {
-                        isShowCreateNotificationView = true
-                    } label: {
-                        HStack {
-                            Text("店舗お知らせを作成")
-                                .foregroundStyle(.blue)
-                                .dynamicTypeSize(.medium)
-                            Spacer()
-                        }
-                    }
-//                    NavigationLink {
-//                        CreateNotificationView()
+//                    Button {
+//                        isShowCreateNotificationView = true
 //                    } label: {
 //                        HStack {
 //                            Text("店舗お知らせを作成")
@@ -129,6 +119,16 @@ struct AccountView: View {
 //                            Spacer()
 //                        }
 //                    }
+                    NavigationLink {
+                        CreateNotificationView()
+                    } label: {
+                        HStack {
+                            Text("店舗お知らせを作成")
+                                .foregroundStyle(.blue)
+                                .dynamicTypeSize(.medium)
+                            Spacer()
+                        }
+                    }
                 }
                 
                 // ユーザー名を変更
@@ -161,18 +161,8 @@ struct AccountView: View {
                 
                 if let currentUser = vm.currentUser, currentUser.isOwner {
                     // 新規店舗を作成
-                    Button {
-                        isShowCreateStoresView = true
-                    } label: {
-                        HStack {
-                            Text("新規店舗を作成")
-                                .foregroundStyle(.blue)
-                                .dynamicTypeSize(.medium)
-                            Spacer()
-                        }
-                    }
-//                    NavigationLink {
-//                        CreateStoresView()
+//                    Button {
+//                        isShowCreateStoresView = true
 //                    } label: {
 //                        HStack {
 //                            Text("新規店舗を作成")
@@ -181,22 +171,22 @@ struct AccountView: View {
 //                            Spacer()
 //                        }
 //                    }
-                }
-                
-                if let currentUser = vm.currentUser, currentUser.isOwner {
-                    // 店舗管理
-                    Button {
-                        isShowStoreEditListVIew = true
+                    NavigationLink {
+                        CreateStoresView()
                     } label: {
                         HStack {
-                            Text("店舗管理")
+                            Text("新規店舗を作成")
                                 .foregroundStyle(.blue)
                                 .dynamicTypeSize(.medium)
                             Spacer()
                         }
                     }
-//                    NavigationLink {
-//                        StoreEditListView()
+                }
+                
+                if let currentUser = vm.currentUser, currentUser.isOwner {
+                    // 店舗管理
+//                    Button {
+//                        isShowStoreEditListVIew = true
 //                    } label: {
 //                        HStack {
 //                            Text("店舗管理")
@@ -205,6 +195,16 @@ struct AccountView: View {
 //                            Spacer()
 //                        }
 //                    }
+                    NavigationLink {
+                        StoreEditListView()
+                    } label: {
+                        HStack {
+                            Text("店舗管理")
+                                .foregroundStyle(.blue)
+                                .dynamicTypeSize(.medium)
+                            Spacer()
+                        }
+                    }
                 }
                 
                 // 残高表示
@@ -250,15 +250,15 @@ struct AccountView: View {
             .listStyle(.inset)
             .environment(\.defaultMinListRowHeight, 60)
         }
-        .sheet(isPresented: $isShowCreateNotificationView) {
-            CreateNotificationView()
-        }
-        .sheet(isPresented: $isShowCreateStoresView) {
-            CreateStoresView()
-        }
-        .sheet(isPresented: $isShowStoreEditListVIew) {
-            StoreEditListView()
-        }
+//        .sheet(isPresented: $isShowCreateNotificationView) {
+//            CreateNotificationView()
+//        }
+//        .sheet(isPresented: $isShowCreateStoresView) {
+//            CreateStoresView()
+//        }
+//        .sheet(isPresented: $isShowStoreEditListVIew) {
+//            StoreEditListView()
+//        }
         .onAppear {
             if FirebaseManager.shared.auth.currentUser?.uid != nil {
                 vm.fetchCurrentUser()
@@ -340,7 +340,7 @@ struct AccountView: View {
             vm.isNavigateNotConfirmEmailView = true
         })
         .fullScreenCover(isPresented: $isUserCurrentryLoggedOut) {
-            EntryView {
+            EntryView(isShowTutorial: false) {
                 isUserCurrentryLoggedOut = false
                 vm.fetchCurrentUser()
                 vm.fetchRecentMessages()

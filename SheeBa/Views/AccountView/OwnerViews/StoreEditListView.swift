@@ -44,7 +44,6 @@ struct StoreEditListView: View {
 //                        .foregroundStyle(Color.red)
 //                }
             }
-            .asCloseButton()
             .padding(.leading, 10)
             .listStyle(.inset)
             .environment(\.defaultMinListRowHeight, 60)
@@ -57,7 +56,6 @@ struct StoreEditListView: View {
         .onAppear {
             fetchAllStores()
         }
-        .asBackButton()
 //        .asSingleAlert(title: "",
 //                       isShowAlert: $isShowChangeIsEnableScanAlert,
 //                       message: "スキャンの可否を更新しますか？",

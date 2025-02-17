@@ -11,10 +11,12 @@ struct EntryView: View {
     
     @ObservedObject var vm: ViewModel
     @State private var isShowTutorialView = false               // チュートリアル表示有無
+    let isShowTutorial: Bool                                    // チュートリアル画面の表示有無
 //    @State private var isShowConfirmStoreOwnerAlert = false     // 店舗オーナー確認アラート
     let didCompleteLoginProcess: () -> ()
     
-    init(didCompleteLoginProcess: @escaping () -> ()) {
+    init(isShowTutorial: Bool, didCompleteLoginProcess: @escaping () -> ()) {
+        self.isShowTutorial = isShowTutorial
         self.didCompleteLoginProcess = didCompleteLoginProcess
         self.vm = .init(didCompleteLoginProcess: didCompleteLoginProcess)
     }
@@ -70,7 +72,9 @@ struct EntryView: View {
             }
         }
         .onAppear {
-            isShowTutorialView = true
+            if isShowTutorial {
+                isShowTutorialView = true
+            }
         }
 //        .asDoubleTextAlert(title: "",
 //                           isShowAlert: $isShowConfirmStoreOwnerAlert,
@@ -92,5 +96,5 @@ struct EntryView: View {
 }
 
 #Preview {
-    EntryView(didCompleteLoginProcess: {})
+    EntryView(isShowTutorial: true, didCompleteLoginProcess: {})
 }

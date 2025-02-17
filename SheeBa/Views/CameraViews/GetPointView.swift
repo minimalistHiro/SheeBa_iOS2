@@ -15,6 +15,7 @@ struct GetPointView: View {
     let getPoint: String
     @State var degree: Double = 100
     @State private var isAnimating = false
+    @State private var isShowStoreDetailView = false                    // StoreDetailViewの表示有無
     @Binding var isSameStoreScanError: Bool
     @Binding var isQrCodeScanError: Bool
     @Binding var isEventStoreScanError: Bool
@@ -77,11 +78,7 @@ struct GetPointView: View {
                         .padding()
                 } else {
                     if store?.isEvent == true {
-                        Text("ハロウィンスタンプ")
-                            .font(.system(size: 30))
-                            .bold()
-                            .dynamicTypeSize(.medium)
-                        Text("ゲット!")
+                        Text("スタンプゲット!")
                             .font(.system(size: 30))
                             .bold()
                             .dynamicTypeSize(.medium)
@@ -101,6 +98,12 @@ struct GetPointView: View {
                             .bold()
                             .dynamicTypeSize(.medium)
                     }
+                    
+                    Button {
+                        isShowStoreDetailView = true
+                    } label: {
+                        CustomCapsule(text: "店舗詳細を見る", imageSystemName: nil, foregroundColor: .blue, textColor: .white, isStroke: false)
+                    }
                 }
                 
                 Spacer()
@@ -116,6 +119,9 @@ struct GetPointView: View {
                 
                 Spacer()
                 Spacer()
+            }
+            .sheet(isPresented: $isShowStoreDetailView) {
+                StoreDetailView(store: store)
             }
             .background(store?.isEvent == true ? Color.orange : Color.white)
         }

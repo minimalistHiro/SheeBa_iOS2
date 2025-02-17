@@ -47,9 +47,7 @@ struct MoneyTransferView: View {
             .overlay {
                 searchNewMemverButton
             }
-            .asCloseButton()
         }
-        .asBackButton()
         .onAppear {
             if FirebaseManager.shared.auth.currentUser?.uid != nil {
                 vm.fetchCurrentUser()
@@ -213,16 +211,16 @@ struct MoneyTransferView: View {
                         Image(systemName: imageSystemName)
                             .resizable()
                             .scaledToFit()
-                            .foregroundStyle(tab == buttonTab ? Color.black : Color.gray)
+                            .foregroundStyle(tab == buttonTab ? Color.black : Color.black.opacity(0.3))
                             .frame(width: frameWidthHeight, height: frameWidthHeight)
                         Spacer()
                     }
                 }
                 Text(text)
                     .font(.caption)
-                    .foregroundStyle(tab == buttonTab ? Color.black : Color.gray)
+                    .foregroundStyle(tab == buttonTab ? Color.black : Color.black.opacity(0.3))
                 Rectangle()
-                    .foregroundColor(tab == buttonTab ? .black : .white)
+                    .foregroundColor(tab == buttonTab ? Color.black : .white)
                     .frame(height: rectangleFrameHeight)
             }
         }

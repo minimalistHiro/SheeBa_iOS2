@@ -22,7 +22,7 @@ final class Setting {
     
     // MARK: - URL
     static let privacyPolicyURL: String = "https://www.shibaginzadori.com/?page_id=1070"// プライバシーポリシーURL
-    static let officialSiteURL: String = "https://www.shibaginzadori.com/?p=970"        // 公式サイトURL
+    static let officialSiteURL: String = "https://www.shibaginzadori.com"               // 公式サイトURL
     
     // MARK: - 各種設定
     // SendPayView

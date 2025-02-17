@@ -79,7 +79,7 @@ struct SendEmailView: View {
     /// - Returns: なし
     private func sendResetPasswordLink(email: String) {
         FirebaseManager.shared.auth.sendPasswordReset(withEmail: email) { error in
-            if let error = error as NSError?, let errorCode = AuthErrorCode.Code(rawValue: error.code) {
+            if let error = error as NSError?, let errorCode = AuthErrorCode(rawValue: error.code) {
                 switch errorCode {
                 case .invalidEmail:
                     vm.handleError(String.invalidEmail, error: error)

@@ -42,8 +42,8 @@ struct Icon {
             case .mini: 0
             case .small: 0
             case .medium: 0
-            case .large: 5
-            case .xLarge: 5
+            case .large: 0
+            case .xLarge: 0
             }
         }
     }

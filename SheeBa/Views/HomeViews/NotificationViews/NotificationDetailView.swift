@@ -99,7 +99,6 @@ struct NotificationDetailView: View {
         }
         .navigationTitle(notification.username)
         .navigationBarTitleDisplayMode(.inline)
-        .asBackButton()
         .asDestructiveAlert(title: "",
                             isShowAlert: $isShowDeleteNotificationAlert,
                             message: "このお知らせを削除しますか？",
